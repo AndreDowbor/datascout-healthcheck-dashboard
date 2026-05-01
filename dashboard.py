@@ -81,11 +81,10 @@ TABLE_CSS = """
 
 @st.cache_resource
 def get_supabase():
-    secrets_keys = list(st.secrets.keys()) if hasattr(st, "secrets") else []
     url = st.secrets.get("DASHBOARD_SUPABASE_URL") or os.getenv("DASHBOARD_SUPABASE_URL") or os.getenv("SUPABASE_URL", "")
     key = st.secrets.get("DASHBOARD_SUPABASE_KEY") or os.getenv("DASHBOARD_SUPABASE_KEY") or os.getenv("SUPABASE_KEY", "")
     if not url or not key:
-        st.error(f"Supabase credentials missing. Keys found in st.secrets: {secrets_keys}")
+        st.error("Supabase credentials missing. Add DASHBOARD_SUPABASE_URL and DASHBOARD_SUPABASE_KEY to your Streamlit secrets.")
         st.stop()
     return create_client(url, key)
 
