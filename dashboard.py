@@ -4,7 +4,7 @@ Run: python3 -m streamlit run dashboard.py
 """
 
 import os
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -46,7 +46,7 @@ st.markdown("""
   .badge-up       { background:#14532d; color:#22C55E; }
   .badge-degraded { background:#451a03; color:#F59E0B; }
   .badge-down     { background:#450a0a; color:#EF4444; }
-  .bot-meta { font-size:11px; color:#64748B; display:flex; gap:10px; flex-wrap:wrap; }
+  .bot-meta { font-size:11px; color:#64748B; display:flex; gap:10px; }
   .last-checked { font-size:11px; color:#475569; margin-top:5px; }
   .ds-divider { border:none; border-top:1px solid #1E293B; margin:2rem 0 0; }
 </style>
@@ -74,14 +74,10 @@ TABLE_CSS = """
   .s-down    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#450a0a; color:#EF4444; }
   .s-pass    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#14532d; color:#22C55E; }
   .s-fail    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#450a0a; color:#EF4444; }
-  .uptime-badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:10px; font-weight:700; }
-  .uptime-cell { display:flex; flex-direction:column; gap:4px; }
 </style>
 """
 
 # ── Supabase ─────────────────────────────────────────────────────────────────
-
-PRODUCTION_ENVS = {"aaae", "aboncle", "oasw", "cpanb"}
 
 def _get_credentials():
     url = st.secrets.get("DASHBOARD_SUPABASE_URL") or os.getenv("DASHBOARD_SUPABASE_URL") or os.getenv("SUPABASE_URL", "")
@@ -92,6 +88,7 @@ def _get_credentials():
 def get_supabase():
     url, key = _get_credentials()
     return create_client(url, key)
+
 
 @st.cache_data(ttl=120)
 def fetch_latest(table: str, group_col: str, limit: int = 500) -> list[dict]:
@@ -104,13 +101,6 @@ def fetch_latest(table: str, group_col: str, limit: int = 500) -> list[dict]:
             seen[key] = row
     return list(seen.values())
 
-@st.cache_data(ttl=300)
-def fetch_history(table: str, env_col: str, days: int = 30) -> list[dict]:
-    sb = get_supabase()
-    since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
-    res = sb.table(table).select(f"{env_col},status,checked_at").gte("checked_at", since).execute()
-    return res.data
-
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -118,6 +108,7 @@ def fmt_ts(iso):
     if not iso:
         return "—"
     try:
+        from datetime import timezone, timedelta
         brt = timezone(timedelta(hours=-3))
         dt = datetime.fromisoformat(iso).astimezone(brt)
         return dt.strftime("%b %d %H:%M BRT")
@@ -153,76 +144,6 @@ def count_statuses(rows, field, values):
 def escape(s):
     return (s or "").replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace('"',"&quot;")
 
-def compute_uptime(rows: list[dict], env_col: str, good_statuses: list[str]) -> dict[str, float]:
-    good_set = {s.upper() for s in good_statuses}
-    counts: dict[str, list[int]] = {}
-    for row in rows:
-        env = row.get(env_col)
-        if not env:
-            continue
-        status = (row.get("status") or "").upper()
-        if env not in counts:
-            counts[env] = [0, 0]
-        counts[env][1] += 1
-        if status in good_set:
-            counts[env][0] += 1
-    return {env: (g / t * 100 if t > 0 else 0.0) for env, (g, t) in counts.items()}
-
-def uptime_badge(pct: float | None) -> str:
-    if pct is None:
-        return '<span style="font-size:10px;color:#475569;">—</span>'
-    color, bg = ("#22C55E","#14532d") if pct >= 95 else ("#F59E0B","#451a03") if pct >= 80 else ("#EF4444","#450a0a")
-    return f'<span class="uptime-badge" style="background:{bg};color:{color};">{pct:.1f}%</span>'
-
-def daily_uptime(rows: list[dict], env_col: str, env_name: str, good_statuses: list[str], days: int = 7) -> list[float | None]:
-    from datetime import date as date_t
-    good_set = {s.upper() for s in good_statuses}
-    today = datetime.now(timezone.utc).date()
-    day_counts: dict[date_t, list[int]] = {}
-    for row in rows:
-        if row.get(env_col) != env_name:
-            continue
-        ts = row.get("checked_at")
-        if not ts:
-            continue
-        try:
-            d = datetime.fromisoformat(ts.replace("Z", "+00:00")).date()
-        except Exception:
-            continue
-        status = (row.get("status") or "").upper()
-        if d not in day_counts:
-            day_counts[d] = [0, 0]
-        day_counts[d][1] += 1
-        if status in good_set:
-            day_counts[d][0] += 1
-    result = []
-    for i in range(days - 1, -1, -1):
-        d = today - timedelta(days=i)
-        if d in day_counts and day_counts[d][1] > 0:
-            g, t = day_counts[d]
-            result.append(g / t * 100)
-        else:
-            result.append(None)
-    return result
-
-def sparkline_svg(data: list[float | None], width: int = 60, height: int = 18) -> str:
-    n = len(data)
-    bar_w = max(1, (width - (n - 1) * 2) // n)
-    bars = ""
-    for i, pct in enumerate(data):
-        x = i * (bar_w + 2)
-        if pct is None:
-            bars += f'<rect x="{x}" y="{height-4}" width="{bar_w}" height="4" rx="1" fill="#1E293B"/>'
-        else:
-            h = max(4, int(height * pct / 100))
-            color = "#22C55E" if pct >= 95 else "#F59E0B" if pct >= 80 else "#EF4444"
-            bars += f'<rect x="{x}" y="{height-h}" width="{bar_w}" height="{h}" rx="1" fill="{color}"/>'
-    return f'<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" style="display:inline-block;vertical-align:middle;">{bars}</svg>'
-
-def prod_sla(iqa_up: dict, prof_up: dict) -> float | None:
-    vals = [v for env in PRODUCTION_ENVS for v in [iqa_up.get(env), prof_up.get(env)] if v is not None]
-    return sum(vals) / len(vals) if vals else None
-
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
@@ -253,13 +174,6 @@ with st.spinner("Loading..."):
     concierge_rows = fetch_latest("concierge_checks", "name")
     iqa_rows       = fetch_latest("iqa_checks", "environment")
     profile_rows   = fetch_latest("profile_checks", "environment")
-    conc_history   = fetch_history("concierge_checks", "name", days=30)
-    iqa_history    = fetch_history("iqa_checks", "environment", days=30)
-    prof_history   = fetch_history("profile_checks", "environment", days=30)
-
-conc_uptime = compute_uptime(conc_history, "name", ["UP"])
-iqa_uptime  = compute_uptime(iqa_history, "environment", ["OK"])
-prof_uptime = compute_uptime(prof_history, "environment", ["PASS"])
 
 # ── Summary cards ─────────────────────────────────────────────────────────────
 
@@ -299,12 +213,7 @@ def summary_card(title, icon, main_val, main_label, main_color, sub_items, last_
       </div>
     </div>"""
 
-sla = prod_sla(iqa_uptime, prof_uptime)
-sla_str   = f"{sla:.1f}%" if sla is not None else "—"
-sla_color = "#22C55E" if sla and sla >= 95 else "#F59E0B" if sla and sla >= 80 else "#EF4444"
-prod_ok   = sum(1 for e in PRODUCTION_ENVS if iqa_uptime.get(e, 0) >= 95)
-
-c1, c2, c3, c4 = st.columns(4)
+c1, c2, c3 = st.columns(3)
 with c1:
     c_total = c_up + c_degraded + c_down
     st.markdown(summary_card(
@@ -329,13 +238,6 @@ with c3:
         [(p_fail, "Failing", "#EF4444")],
         latest_ts(profile_rows)
     ), unsafe_allow_html=True)
-with c4:
-    st.markdown(summary_card(
-        "Production SLA", "📊",
-        sla_str, "avg uptime · 30 days", sla_color,
-        [(f"{prod_ok}/{len(PRODUCTION_ENVS)}", "Envs ≥ 95% uptime", "#22C55E")],
-        "30-day window"
-    ), unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top:2rem'></div>", unsafe_allow_html=True)
 
@@ -353,25 +255,20 @@ else:
     )
     cols = st.columns(5)
     for i, bot in enumerate(sorted_bots):
-        name    = bot.get("name", "—")
-        status  = bot.get("status", "DOWN")
-        sc      = status_class(status)
-        bc      = badge_class(status)
-        http    = fmt_ms(bot.get("http_response_ms"))
-        chat    = fmt_ms(bot.get("chat_response_ms"))
-        ts      = fmt_ts(bot.get("checked_at"))
-        error   = escape(bot.get("error") or "")
-        up_pct  = conc_uptime.get(name)
-        up_str  = f"{up_pct:.0f}% up" if up_pct is not None else ""
+        name   = bot.get("name", "—")
+        status = bot.get("status", "DOWN")
+        sc     = status_class(status)
+        bc     = badge_class(status)
+        http   = fmt_ms(bot.get("http_response_ms"))
+        chat   = fmt_ms(bot.get("chat_response_ms"))
+        ts     = fmt_ts(bot.get("checked_at"))
+        error  = escape(bot.get("error") or "")
         with cols[i % 5]:
             st.markdown(f"""
             <div class="bot-card {sc}">
               <div class="bot-name" title="{escape(name)}">{escape(name)}</div>
               <div><span class="bot-badge {bc}">{escape(status)}</span></div>
-              <div class="bot-meta">
-                <span>HTTP {http}</span><span>Chat {chat}</span>
-                {"" if not up_str else f'<span style="color:#64748B;">{up_str} (30d)</span>'}
-              </div>
+              <div class="bot-meta"><span>HTTP {http}</span><span>Chat {chat}</span></div>
               {"" if not error or sc == "up" else f'<div style="font-size:10px;color:#EF4444;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{error[:50]}</div>'}
               <div class="last-checked">{ts}</div>
             </div>""", unsafe_allow_html=True)
@@ -427,38 +324,36 @@ else:
 
     rows_html = ""
     for i, r in enumerate(sorted_iqa):
-        env_name = r.get("environment", "—")
-        env      = escape(env_name)
-        status   = r.get("status", "—")
-        issues   = r.get("issues_count", 0)
-        ts       = escape(fmt_ts(r.get("checked_at")))
-        details  = r.get("details") or {}
-        broken   = details.get("broken", [])
-        missing  = details.get("missing", [])
+        env    = escape(r.get("environment", "—"))
+        status = r.get("status", "—")
+        issues = r.get("issues_count", 0)
+        ts     = escape(fmt_ts(r.get("checked_at")))
+        details = r.get("details") or {}
+        broken  = details.get("broken", [])
+        missing = details.get("missing", [])
+        params  = details.get("params", [])
         has_details = bool(broken or missing)
-        chevron  = '<span class="chevron">▶</span>' if has_details else '<span style="display:inline-block;width:16px;margin-right:6px"></span>'
-
-        up_pct   = iqa_uptime.get(env_name)
-        spark    = daily_uptime(iqa_history, "environment", env_name, ["OK"])
-        uptime_cell = f'<div class="uptime-cell">{uptime_badge(up_pct)}{sparkline_svg(spark)}</div>'
+        chevron = '<span class="chevron">▶</span>' if has_details else '<span style="display:inline-block;width:16px;margin-right:6px"></span>'
 
         rows_html += f"""<tr class="iqa-row" data-id="{i}">
           <td><span class="env">{chevron}{env}</span></td>
           <td>{table_badge(status)}</td>
           <td><span class="cnt">{issues if issues else "—"}</span></td>
-          <td>{uptime_cell}</td>
           <td><span class="ts">{ts}</span></td>
         </tr>"""
 
+        # Detail row (always rendered, toggled via JS)
         if has_details:
             detail_html = '<div class="detail-inner">'
             if broken:
-                detail_html += '<div class="detail-group"><div class="detail-group-title broken">Broken</div>'
+                detail_html += '<div class="detail-group">'
+                detail_html += '<div class="detail-group-title broken">Broken</div>'
                 for p in broken:
                     detail_html += f'<div class="iqa-path broken">{escape(p)}</div>'
                 detail_html += '</div>'
             if missing:
-                detail_html += '<div class="detail-group"><div class="detail-group-title missing">Missing</div>'
+                detail_html += '<div class="detail-group">'
+                detail_html += '<div class="detail-group-title missing">Missing</div>'
                 for p in missing:
                     detail_html += f'<div class="iqa-path missing">{escape(p)}</div>'
                 detail_html += '</div>'
@@ -467,14 +362,15 @@ else:
             detail_html = '<div class="no-issues">No broken or missing IQAs.</div>'
 
         rows_html += f"""<tr class="detail-row" id="detail-{i}">
-          <td class="detail-cell" colspan="5">{detail_html}</td>
+          <td class="detail-cell" colspan="4">{detail_html}</td>
         </tr>"""
 
-    height = 60 + len(sorted_iqa) * 44
+    # Estimate height: base rows + potential expanded detail rows (show up to 4 paths per env)
+    height = 60 + len(sorted_iqa) * 42
     components.html(f"""{TABLE_CSS}{IQA_EXPAND_CSS}
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Environment</th><th>Status</th><th>Issues</th><th>Uptime 30d</th><th>Last Checked</th></tr></thead>
+        <thead><tr><th>Environment</th><th>Status</th><th>Issues</th><th>Last Checked</th></tr></thead>
         <tbody>{rows_html}</tbody>
       </table>
     </div>
@@ -494,30 +390,25 @@ else:
     )
     rows_html = ""
     for r in sorted_profiles:
-        env_name = r.get("environment", "—")
-        env      = escape(env_name)
-        status   = r.get("status", "—")
-        dur      = r.get("duration_seconds")
-        dur_s    = f"{dur:.1f}s" if dur is not None else "—"
-        ts       = escape(fmt_ts(r.get("checked_at")))
-        error    = escape(r.get("error") or "")
-        up_pct   = prof_uptime.get(env_name)
-        spark    = daily_uptime(prof_history, "environment", env_name, ["PASS"])
-        uptime_cell = f'<div class="uptime-cell">{uptime_badge(up_pct)}{sparkline_svg(spark)}</div>'
+        env    = escape(r.get("environment", "—"))
+        status = r.get("status", "—")
+        dur    = r.get("duration_seconds")
+        dur_s  = f"{dur:.1f}s" if dur is not None else "—"
+        ts     = escape(fmt_ts(r.get("checked_at")))
+        error  = escape(r.get("error") or "")
         rows_html += f"""<tr>
           <td><span class="env">{env}</span></td>
           <td>{table_badge(status)}</td>
           <td><span class="ts">{dur_s}</span></td>
-          <td>{uptime_cell}</td>
           <td><span class="ts">{ts}</span></td>
           <td><span class="err" title="{error}">{"" if not error or status.upper()=="PASS" else error[:60]}</span></td>
         </tr>"""
 
-    height = 60 + len(sorted_profiles) * 44
+    height = 60 + len(sorted_profiles) * 42
     components.html(f"""{TABLE_CSS}
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Environment</th><th>Status</th><th>Duration</th><th>Uptime 30d</th><th>Last Checked</th><th>Error</th></tr></thead>
+        <thead><tr><th>Environment</th><th>Status</th><th>Duration</th><th>Last Checked</th><th>Error</th></tr></thead>
         <tbody>{rows_html}</tbody>
       </table>
     </div>""", height=height, scrolling=False)
@@ -528,5 +419,5 @@ now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 st.markdown(f"""
 <hr class="ds-divider">
 <p style="font-size:11px;color:#334155;text-align:center;margin-top:1.5rem;">
-  DataScout Ops &nbsp;·&nbsp; Refreshed {now} &nbsp;·&nbsp; Live data cached 2 min · Uptime cached 5 min
+  DataScout Ops &nbsp;·&nbsp; Refreshed {now} &nbsp;·&nbsp; Data cached 2 min
 </p>""", unsafe_allow_html=True)
