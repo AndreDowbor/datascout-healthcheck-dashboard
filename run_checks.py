@@ -96,8 +96,8 @@ if __name__ == "__main__":
 
     results["Profile Tester"] = run(
         label="Profile Tester",
-        script="/Users/andredowbor/Repos/chat-monitor/New_Profile_Tester/imis_env_tester_with_1password.py",
-        cwd="/Users/andredowbor/Repos/chat-monitor/New_Profile_Tester",
+        script="/Users/andredowbor/Projects/work/datascout/new-profile-tester/imis_env_tester_with_1password.py",
+        cwd="/Users/andredowbor/Projects/work/datascout/new-profile-tester",
     )
     alert_production_failures("Profile")
 
