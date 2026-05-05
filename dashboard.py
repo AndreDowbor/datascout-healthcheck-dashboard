@@ -37,10 +37,12 @@ st.markdown("""
   .pill-amber  { background:#451a03; color:#F59E0B; }
   .pill-red    { background:#450a0a; color:#EF4444; }
   .pill-gray   { background:#1E293B; color:#94A3B8; }
-  .bot-card { background:#0F172A; border:1px solid #1E293B; border-radius:10px; padding:14px 16px; margin-bottom:10px; }
+  .bot-card { background:#0F172A; border:1px solid #1E293B; border-radius:10px; padding:14px 16px; margin-bottom:10px; transition:border-color 0.15s, background 0.15s; }
   .bot-card.up       { border-left:3px solid #22C55E; }
   .bot-card.degraded { border-left:3px solid #F59E0B; }
   .bot-card.down     { border-left:3px solid #EF4444; }
+  a.bot-link { text-decoration:none; display:block; }
+  a.bot-link:hover .bot-card { background:#131f35; border-color:#334155; cursor:pointer; }
   .bot-name { font-size:13px; font-weight:600; color:#F8FAFC; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .bot-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; letter-spacing:0.05em; margin-bottom:8px; }
   .badge-up       { background:#14532d; color:#22C55E; }
@@ -174,6 +176,7 @@ with st.spinner("Loading..."):
     concierge_rows = fetch_latest("concierge_checks", "name")
     iqa_rows       = fetch_latest("iqa_checks", "environment")
     profile_rows   = fetch_latest("profile_checks", "environment")
+    engage_rows    = fetch_latest("engage_checks", "org")
 
 # ── Summary cards ─────────────────────────────────────────────────────────────
 
@@ -185,6 +188,9 @@ i_issues   = count_statuses(iqa_rows, "status", ["ISSUES"])
 i_down     = count_statuses(iqa_rows, "status", ["DOWN"])
 p_pass     = count_statuses(profile_rows, "status", ["PASS"])
 p_fail     = count_statuses(profile_rows, "status", ["FAIL"])
+e_ok       = count_statuses(engage_rows, "status", ["OK"])
+e_slow     = count_statuses(engage_rows, "status", ["SLOW"])
+e_down     = count_statuses(engage_rows, "status", ["DOWN"])
 
 def latest_ts(rows):
     ts = max((r.get("checked_at") or "" for r in rows), default="")
@@ -213,7 +219,7 @@ def summary_card(title, icon, main_val, main_label, main_color, sub_items, last_
       </div>
     </div>"""
 
-c1, c2, c3 = st.columns(3)
+c1, c2, c3, c4 = st.columns(4)
 with c1:
     c_total = c_up + c_degraded + c_down
     st.markdown(summary_card(
@@ -237,6 +243,14 @@ with c3:
         p_pass, f"of {p_total} environments passing", "#22C55E",
         [(p_fail, "Failing", "#EF4444")],
         latest_ts(profile_rows)
+    ), unsafe_allow_html=True)
+with c4:
+    e_total = e_ok + e_slow + e_down
+    st.markdown(summary_card(
+        "Engage", "⚡",
+        e_ok, f"of {e_total} orgs OK", "#22C55E",
+        [(e_slow, "Slow", "#F59E0B"), (e_down, "Down", "#EF4444")],
+        latest_ts(engage_rows)
     ), unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top:2rem'></div>", unsafe_allow_html=True)
@@ -263,15 +277,20 @@ else:
         chat   = fmt_ms(bot.get("chat_response_ms"))
         ts     = fmt_ts(bot.get("checked_at"))
         error  = escape(bot.get("error") or "")
+        url    = escape(bot.get("url") or "")
         with cols[i % 5]:
-            st.markdown(f"""
-            <div class="bot-card {sc}">
-              <div class="bot-name" title="{escape(name)}">{escape(name)}</div>
-              <div><span class="bot-badge {bc}">{escape(status)}</span></div>
-              <div class="bot-meta"><span>HTTP {http}</span><span>Chat {chat}</span></div>
-              {"" if not error or sc == "up" else f'<div style="font-size:10px;color:#EF4444;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{error[:50]}</div>'}
-              <div class="last-checked">{ts}</div>
-            </div>""", unsafe_allow_html=True)
+            error_html = "" if not error or sc == "up" else f'<div style="font-size:10px;color:#EF4444;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{error[:50]}</div>'
+            card_inner = (
+                f'<div class="bot-name" title="{escape(name)}">{escape(name)}</div>'
+                f'<div><span class="bot-badge {bc}">{escape(status)}</span></div>'
+                f'<div class="bot-meta"><span>HTTP {http}</span><span>Chat {chat}</span></div>'
+                f'{error_html}'
+                f'<div class="last-checked">{ts}</div>'
+            )
+            if url:
+                st.markdown(f'<a class="bot-link" href="{url}" target="_blank" rel="noopener noreferrer"><div class="bot-card {sc}">{card_inner}</div></a>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div class="bot-card {sc}">{card_inner}</div>', unsafe_allow_html=True)
 
 # ── Section 2: IQA table ──────────────────────────────────────────────────────
 
@@ -409,6 +428,51 @@ else:
     <div class="table-wrap">
       <table>
         <thead><tr><th>Environment</th><th>Status</th><th>Duration</th><th>Last Checked</th><th>Error</th></tr></thead>
+        <tbody>{rows_html}</tbody>
+      </table>
+    </div>""", height=height, scrolling=False)
+
+# ── Section 4: Engage table ───────────────────────────────────────────────────
+
+st.markdown("<hr class='ds-divider'><div class='section-label'>Engage</div>", unsafe_allow_html=True)
+
+if not engage_rows:
+    st.info("No Engage data yet. Run the Engage Healthcheck to populate.")
+else:
+    sorted_engage = sorted(
+        engage_rows,
+        key=lambda r: ({"OK": 2, "SLOW": 1, "DEGRADED": 1, "PARTIAL": 1, "DOWN": 0}.get((r.get("status") or "DOWN").upper(), 0), r.get("org", "")),
+        reverse=True,
+    )
+    rows_html = ""
+    for r in sorted_engage:
+        org     = escape(r.get("org", "—"))
+        status  = r.get("status", "—")
+        load    = r.get("load_time_seconds")
+        load_s  = f"{load:.1f}s" if load is not None else "—"
+        ts      = escape(fmt_ts(r.get("checked_at")))
+        c_err   = r.get("console_error_count") or 0
+        p_err   = r.get("page_error_count") or 0
+        summary = escape(r.get("errors_summary") or r.get("error_reason") or "")
+        err_counts = ""
+        if c_err:
+            err_counts += f'<span style="color:#F59E0B;font-size:11px;margin-right:6px">⚠ {c_err} console</span>'
+        if p_err:
+            err_counts += f'<span style="color:#EF4444;font-size:11px;margin-right:6px">✕ {p_err} JS</span>'
+        rows_html += f"""<tr>
+          <td><span class="env">{org}</span></td>
+          <td>{table_badge(status)}</td>
+          <td><span class="ts">{load_s}</span></td>
+          <td>{err_counts}</td>
+          <td><span class="err" title="{summary}">{"" if not summary or status.upper() == "OK" else summary[:70]}</span></td>
+          <td><span class="ts">{ts}</span></td>
+        </tr>"""
+
+    height = 60 + len(sorted_engage) * 42
+    components.html(f"""{TABLE_CSS}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Org</th><th>Status</th><th>Load</th><th>Errors</th><th>Details</th><th>Last Checked</th></tr></thead>
         <tbody>{rows_html}</tbody>
       </table>
     </div>""", height=height, scrolling=False)

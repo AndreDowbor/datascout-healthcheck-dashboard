@@ -101,6 +101,12 @@ if __name__ == "__main__":
     )
     alert_production_failures("Profile")
 
+    results["Engage Healthcheck"] = run(
+        label="Engage Healthcheck",
+        script=os.path.join(BASE, "healthcheck", "engage_healthcheck.py"),
+        cwd=BASE,
+    )
+
     elapsed = (datetime.now() - start).seconds
     print(f"\n{'='*60}")
     print(f"  All checks done in {elapsed}s")
