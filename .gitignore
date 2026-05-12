@@ -5,4 +5,8 @@ __pycache__/
 .DS_Store
 logs/
 reports/
+screenshots/
+test_results.json
+report_*.html
+auth_states/
 .vscode/

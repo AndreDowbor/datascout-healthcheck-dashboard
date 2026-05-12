@@ -1,5 +1,5 @@
 """
-run_checks.py — Runs IQA + Profile checks sequentially and pushes results to Supabase.
+run_checks.py — Runs IQA + Profile + Engage + Algolia checks sequentially.
 Concierge checks run automatically via chat-monitor and don't need to be here.
 
 Usage:
@@ -104,6 +104,12 @@ if __name__ == "__main__":
     results["Engage Healthcheck"] = run(
         label="Engage Healthcheck",
         script=os.path.join(BASE, "healthcheck", "engage_healthcheck.py"),
+        cwd=BASE,
+    )
+
+    results["Algolia Healthcheck"] = run(
+        label="Algolia Healthcheck",
+        script=os.path.join(BASE, "healthcheck", "algolia_healthcheck.py"),
         cwd=BASE,
     )
 
