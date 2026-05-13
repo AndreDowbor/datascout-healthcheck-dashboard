@@ -30,7 +30,7 @@ st.markdown("""
   html, body, [class*="css"] { font-family: 'Inter', sans-serif; background-color: #EDF2FB; color: #0D1B3E; }
   #MainMenu, footer, header { visibility: hidden; }
   .block-container { padding: 2rem 2rem 4rem; max-width: 1400px; }
-  .section-label { font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#1A6DD8; margin-bottom:0.75rem; margin-top:2rem; }
+  .section-label { font-size:15px; font-weight:700; letter-spacing:0.04em; color:#0D1B3E; margin-bottom:0.75rem; margin-top:2rem; }
   .pill-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1.5rem; }
   .pill { padding:4px 14px; border-radius:999px; font-size:12px; font-weight:600; }
   .pill-green  { background:#DCFCE7; color:#15803D; }
@@ -63,7 +63,7 @@ TABLE_CSS = """
   body { background: transparent; font-family: 'Inter', sans-serif; }
   .table-wrap { background:#FFFFFF; border:1px solid #D0DDEF; border-radius:10px; overflow:hidden; }
   table { width:100%; border-collapse:collapse; font-size:13px; }
-  th { text-align:left; padding:9px 14px; color:#1A6DD8; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #D0DDEF; background:#F5F9FF; }
+  th { text-align:left; padding:9px 14px; color:#1A6DD8; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid #D0DDEF; background:#F5F9FF; }
   td { padding:10px 14px; border-bottom:1px solid #EAF0FA; color:#0D1B3E; vertical-align:middle; }
   tr:last-child td { border-bottom:none; }
   tr:hover td { background:#F0F6FF; }
@@ -224,7 +224,7 @@ def summary_card(title, icon, main_val, main_label, main_color, sub_items, last_
     <div style="background:#FFFFFF;border:1px solid #D0DDEF;border-top:3px solid #1A6DD8;border-radius:14px;padding:24px 28px;height:100%;box-shadow:0 1px 6px rgba(26,109,216,0.06);">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
         <span style="font-size:20px;">{icon}</span>
-        <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#1A6DD8;">{title}</span>
+        <span style="font-size:14px;font-weight:700;letter-spacing:0.03em;color:#1A6DD8;">{title}</span>
       </div>
       <div style="font-size:52px;font-weight:800;color:{main_color};line-height:1;letter-spacing:-2px;">{main_val}</div>
       <div style="font-size:13px;color:#7A90AA;margin-top:6px;font-weight:400;">{main_label}</div>
