@@ -241,7 +241,7 @@ with c3:
     st.markdown(summary_card(
         "Profile Checks", "👤",
         p_pass, f"of {p_total} environments passing", "#22C55E",
-        [(p_fail, "Failing", "#EF4444")],
+        [(0, "Degraded", "#F59E0B"), (p_fail, "Failing", "#EF4444")],
         latest_ts(profile_rows)
     ), unsafe_allow_html=True)
 with c4:
