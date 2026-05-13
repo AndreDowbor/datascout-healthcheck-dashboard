@@ -27,30 +27,30 @@ st.set_page_config(
 st.markdown("""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-  html, body, [class*="css"] { font-family: 'Inter', sans-serif; background-color: #06101E; color: #F0F4FF; }
+  html, body, [class*="css"] { font-family: 'Inter', sans-serif; background-color: #EDF2FB; color: #0D1B3E; }
   #MainMenu, footer, header { visibility: hidden; }
   .block-container { padding: 2rem 2rem 4rem; max-width: 1400px; }
   .section-label { font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#1A6DD8; margin-bottom:0.75rem; margin-top:2rem; }
   .pill-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1.5rem; }
   .pill { padding:4px 14px; border-radius:999px; font-size:12px; font-weight:600; }
-  .pill-green  { background:#0A3020; color:#22C55E; }
-  .pill-amber  { background:#2D1800; color:#F59E0B; }
-  .pill-red    { background:#2D0808; color:#EF4444; }
-  .pill-gray   { background:#0F1E35; color:#94A3B8; }
-  .bot-card { background:#0C1A2E; border:1px solid #1A2F4A; border-radius:10px; padding:14px 16px; margin-bottom:10px; transition:border-color 0.2s, background 0.2s; }
-  .bot-card.up       { border-left:3px solid #22C55E; }
-  .bot-card.degraded { border-left:3px solid #F59E0B; }
-  .bot-card.down     { border-left:3px solid #EF4444; }
+  .pill-green  { background:#DCFCE7; color:#15803D; }
+  .pill-amber  { background:#FEF3C7; color:#B45309; }
+  .pill-red    { background:#FEE2E2; color:#DC2626; }
+  .pill-gray   { background:#E2E8F0; color:#64748B; }
+  .bot-card { background:#FFFFFF; border:1px solid #D0DDEF; border-radius:10px; padding:14px 16px; margin-bottom:10px; transition:border-color 0.2s, box-shadow 0.2s; }
+  .bot-card.up       { border-left:3px solid #16A34A; }
+  .bot-card.degraded { border-left:3px solid #D97706; }
+  .bot-card.down     { border-left:3px solid #DC2626; }
   a.bot-link { text-decoration:none; display:block; }
-  a.bot-link:hover .bot-card { background:#102240; border-color:#1A6DD8; cursor:pointer; }
-  .bot-name { font-size:13px; font-weight:600; color:#F0F4FF; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  a.bot-link:hover .bot-card { border-color:#1A6DD8; box-shadow:0 2px 12px rgba(26,109,216,0.12); cursor:pointer; }
+  .bot-name { font-size:13px; font-weight:600; color:#0D1B3E; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .bot-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; letter-spacing:0.05em; margin-bottom:8px; }
-  .badge-up       { background:#0A3020; color:#22C55E; }
-  .badge-degraded { background:#2D1800; color:#F59E0B; }
-  .badge-down     { background:#2D0808; color:#EF4444; }
-  .bot-meta { font-size:11px; color:#4A6080; display:flex; gap:10px; }
-  .last-checked { font-size:11px; color:#3A5070; margin-top:5px; }
-  .ds-divider { border:none; border-top:1px solid #1A2F4A; margin:2rem 0 0; }
+  .badge-up       { background:#DCFCE7; color:#15803D; }
+  .badge-degraded { background:#FEF3C7; color:#B45309; }
+  .badge-down     { background:#FEE2E2; color:#DC2626; }
+  .bot-meta { font-size:11px; color:#7A90AA; display:flex; gap:10px; }
+  .last-checked { font-size:11px; color:#8A9FBA; margin-top:5px; }
+  .ds-divider { border:none; border-top:1px solid #C8D8EE; margin:2rem 0 0; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -61,21 +61,21 @@ TABLE_CSS = """
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: transparent; font-family: 'Inter', sans-serif; }
-  .table-wrap { background:#0C1A2E; border:1px solid #1A2F4A; border-radius:10px; overflow:hidden; }
+  .table-wrap { background:#FFFFFF; border:1px solid #D0DDEF; border-radius:10px; overflow:hidden; }
   table { width:100%; border-collapse:collapse; font-size:13px; }
-  th { text-align:left; padding:9px 14px; color:#1A6DD8; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #1A2F4A; }
-  td { padding:10px 14px; border-bottom:1px solid #1A2F4A; color:#F0F4FF; vertical-align:middle; }
+  th { text-align:left; padding:9px 14px; color:#1A6DD8; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #D0DDEF; background:#F5F9FF; }
+  td { padding:10px 14px; border-bottom:1px solid #EAF0FA; color:#0D1B3E; vertical-align:middle; }
   tr:last-child td { border-bottom:none; }
-  tr:hover td { background:#102240; }
-  .env  { font-weight:600; color:#4B9CF5; font-family:monospace; font-size:12px; }
-  .ts   { color:#3A5070; font-size:11px; }
-  .err  { color:#EF4444; font-size:11px; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .cnt  { color:#94A3B8; font-size:12px; }
-  .s-ok      { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#0A3020; color:#22C55E; }
-  .s-issues  { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#2D1800; color:#F59E0B; }
-  .s-down    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#2D0808; color:#EF4444; }
-  .s-pass    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#0A3020; color:#22C55E; }
-  .s-fail    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#2D0808; color:#EF4444; }
+  tr:hover td { background:#F0F6FF; }
+  .env  { font-weight:600; color:#1A6DD8; font-family:monospace; font-size:12px; }
+  .ts   { color:#8A9FBA; font-size:11px; }
+  .err  { color:#DC2626; font-size:11px; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .cnt  { color:#5A7A9A; font-size:12px; }
+  .s-ok      { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#DCFCE7; color:#15803D; }
+  .s-issues  { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#FEF3C7; color:#B45309; }
+  .s-down    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#FEE2E2; color:#DC2626; }
+  .s-pass    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#DCFCE7; color:#15803D; }
+  .s-fail    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#FEE2E2; color:#DC2626; }
 </style>
 """
 
@@ -166,10 +166,10 @@ with col_title:
           </svg>
           <div>
             <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#1A6DD8;line-height:1;">Bursting Silver</div>
-            <h1 style="font-size:22px;font-weight:800;color:#F0F4FF;margin:2px 0 0;letter-spacing:-0.5px;">DataScout Ops Dashboard</h1>
+            <h1 style="font-size:22px;font-weight:800;color:#0D1B3E;margin:2px 0 0;letter-spacing:-0.5px;">DataScout Ops Dashboard</h1>
           </div>
         </div>
-        <p style="font-size:13px;color:#3A5070;margin:6px 0 0 50px;">Platform health across all environments</p>
+        <p style="font-size:13px;color:#7A90AA;margin:6px 0 0 50px;">Platform health across all environments</p>
     """, unsafe_allow_html=True)
 with col_refresh:
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
@@ -214,24 +214,24 @@ def latest_ts(rows):
 
 def summary_card(title, icon, main_val, main_label, main_color, sub_items, last_checked):
     subs = "".join([
-        f'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #1A2F4A;">'
-        f'<span style="font-size:13px;color:#5A7A9A;font-weight:500;">{label}</span>'
+        f'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #EAF0FA;">'
+        f'<span style="font-size:13px;color:#7A90AA;font-weight:500;">{label}</span>'
         f'<span style="font-size:15px;font-weight:700;color:{color};">{val}</span>'
         f'</div>'
         for val, label, color in sub_items
     ])
     return f"""
-    <div style="background:#0C1A2E;border:1px solid #1A2F4A;border-top:3px solid #1A6DD8;border-radius:14px;padding:24px 28px;height:100%;">
+    <div style="background:#FFFFFF;border:1px solid #D0DDEF;border-top:3px solid #1A6DD8;border-radius:14px;padding:24px 28px;height:100%;box-shadow:0 1px 6px rgba(26,109,216,0.06);">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
         <span style="font-size:20px;">{icon}</span>
         <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#1A6DD8;">{title}</span>
       </div>
       <div style="font-size:52px;font-weight:800;color:{main_color};line-height:1;letter-spacing:-2px;">{main_val}</div>
-      <div style="font-size:13px;color:#5A7A9A;margin-top:6px;font-weight:400;">{main_label}</div>
-      <div style="border-top:1px solid #1A2F4A;margin-top:20px;">{subs}</div>
+      <div style="font-size:13px;color:#7A90AA;margin-top:6px;font-weight:400;">{main_label}</div>
+      <div style="border-top:1px solid #EAF0FA;margin-top:20px;">{subs}</div>
       <div style="margin-top:16px;display:flex;align-items:center;gap:6px;">
         <span style="width:6px;height:6px;border-radius:50%;background:#1A6DD8;display:inline-block;flex-shrink:0;"></span>
-        <span style="font-size:12px;color:#5A7A9A;">Last checked <strong style="color:#B0C8E8;">{last_checked}</strong></span>
+        <span style="font-size:12px;color:#8A9FBA;">Last checked <strong style="color:#1A6DD8;">{last_checked}</strong></span>
       </div>
     </div>"""
 
@@ -240,32 +240,32 @@ with c1:
     c_total = c_up + c_degraded + c_down
     st.markdown(summary_card(
         "Concierge Bots", "🤖",
-        c_up, f"of {c_total} bots online", "#22C55E",
-        [(c_degraded, "Degraded", "#F59E0B"), (c_down, "Down", "#EF4444")],
+        c_up, f"of {c_total} bots online", "#16A34A",
+        [(c_degraded, "Degraded", "#D97706"), (c_down, "Down", "#DC2626")],
         latest_ts(concierge_rows)
     ), unsafe_allow_html=True)
 with c2:
     i_total = i_ok + i_issues + i_down
     st.markdown(summary_card(
         "IQA Structure", "🔍",
-        i_ok, f"of {i_total} environments OK", "#22C55E",
-        [(i_issues, "With issues", "#F59E0B"), (i_down, "Down", "#EF4444")],
+        i_ok, f"of {i_total} environments OK", "#16A34A",
+        [(i_issues, "With issues", "#D97706"), (i_down, "Down", "#DC2626")],
         latest_ts(iqa_rows)
     ), unsafe_allow_html=True)
 with c3:
     p_total = p_pass + p_fail
     st.markdown(summary_card(
         "Profile Checks", "👤",
-        p_pass, f"of {p_total} environments passing", "#22C55E",
-        [(0, "Degraded", "#F59E0B"), (p_fail, "Failing", "#EF4444")],
+        p_pass, f"of {p_total} environments passing", "#16A34A",
+        [(0, "Degraded", "#D97706"), (p_fail, "Failing", "#DC2626")],
         latest_ts(profile_rows)
     ), unsafe_allow_html=True)
 with c4:
     e_total = e_ok + e_slow + e_down
     st.markdown(summary_card(
         "Engage", "⚡",
-        e_ok, f"of {e_total} orgs OK", "#22C55E",
-        [(e_slow, "Slow", "#F59E0B"), (e_down, "Down", "#EF4444")],
+        e_ok, f"of {e_total} orgs OK", "#16A34A",
+        [(e_slow, "Slow", "#D97706"), (e_down, "Down", "#DC2626")],
         latest_ts(engage_rows)
     ), unsafe_allow_html=True)
 
