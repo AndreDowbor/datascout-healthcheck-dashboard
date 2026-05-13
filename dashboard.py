@@ -16,8 +16,8 @@ load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 # ── Page config ─────────────────────────────────────────────────────────────
 
 st.set_page_config(
-    page_title="DataScout Ops",
-    page_icon="🛰",
+    page_title="DataScout Ops — Bursting Silver",
+    page_icon="🔵",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -26,31 +26,31 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-  html, body, [class*="css"] { font-family: 'Inter', sans-serif; background-color: #020617; color: #F8FAFC; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  html, body, [class*="css"] { font-family: 'Inter', sans-serif; background-color: #06101E; color: #F0F4FF; }
   #MainMenu, footer, header { visibility: hidden; }
   .block-container { padding: 2rem 2rem 4rem; max-width: 1400px; }
-  .section-label { font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#475569; margin-bottom:0.75rem; margin-top:2rem; }
+  .section-label { font-size:11px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:#1A6DD8; margin-bottom:0.75rem; margin-top:2rem; }
   .pill-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:1.5rem; }
   .pill { padding:4px 14px; border-radius:999px; font-size:12px; font-weight:600; }
-  .pill-green  { background:#14532d; color:#22C55E; }
-  .pill-amber  { background:#451a03; color:#F59E0B; }
-  .pill-red    { background:#450a0a; color:#EF4444; }
-  .pill-gray   { background:#1E293B; color:#94A3B8; }
-  .bot-card { background:#0F172A; border:1px solid #1E293B; border-radius:10px; padding:14px 16px; margin-bottom:10px; transition:border-color 0.15s, background 0.15s; }
+  .pill-green  { background:#0A3020; color:#22C55E; }
+  .pill-amber  { background:#2D1800; color:#F59E0B; }
+  .pill-red    { background:#2D0808; color:#EF4444; }
+  .pill-gray   { background:#0F1E35; color:#94A3B8; }
+  .bot-card { background:#0C1A2E; border:1px solid #1A2F4A; border-radius:10px; padding:14px 16px; margin-bottom:10px; transition:border-color 0.2s, background 0.2s; }
   .bot-card.up       { border-left:3px solid #22C55E; }
   .bot-card.degraded { border-left:3px solid #F59E0B; }
   .bot-card.down     { border-left:3px solid #EF4444; }
   a.bot-link { text-decoration:none; display:block; }
-  a.bot-link:hover .bot-card { background:#131f35; border-color:#334155; cursor:pointer; }
-  .bot-name { font-size:13px; font-weight:600; color:#F8FAFC; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  a.bot-link:hover .bot-card { background:#102240; border-color:#1A6DD8; cursor:pointer; }
+  .bot-name { font-size:13px; font-weight:600; color:#F0F4FF; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .bot-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; letter-spacing:0.05em; margin-bottom:8px; }
-  .badge-up       { background:#14532d; color:#22C55E; }
-  .badge-degraded { background:#451a03; color:#F59E0B; }
-  .badge-down     { background:#450a0a; color:#EF4444; }
-  .bot-meta { font-size:11px; color:#64748B; display:flex; gap:10px; }
-  .last-checked { font-size:11px; color:#475569; margin-top:5px; }
-  .ds-divider { border:none; border-top:1px solid #1E293B; margin:2rem 0 0; }
+  .badge-up       { background:#0A3020; color:#22C55E; }
+  .badge-degraded { background:#2D1800; color:#F59E0B; }
+  .badge-down     { background:#2D0808; color:#EF4444; }
+  .bot-meta { font-size:11px; color:#4A6080; display:flex; gap:10px; }
+  .last-checked { font-size:11px; color:#3A5070; margin-top:5px; }
+  .ds-divider { border:none; border-top:1px solid #1A2F4A; margin:2rem 0 0; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -61,21 +61,21 @@ TABLE_CSS = """
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: transparent; font-family: 'Inter', sans-serif; }
-  .table-wrap { background:#0F172A; border:1px solid #1E293B; border-radius:10px; overflow:hidden; }
+  .table-wrap { background:#0C1A2E; border:1px solid #1A2F4A; border-radius:10px; overflow:hidden; }
   table { width:100%; border-collapse:collapse; font-size:13px; }
-  th { text-align:left; padding:9px 14px; color:#475569; font-weight:500; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid #1E293B; }
-  td { padding:10px 14px; border-bottom:1px solid #1E293B; color:#F8FAFC; vertical-align:middle; }
+  th { text-align:left; padding:9px 14px; color:#1A6DD8; font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:0.08em; border-bottom:1px solid #1A2F4A; }
+  td { padding:10px 14px; border-bottom:1px solid #1A2F4A; color:#F0F4FF; vertical-align:middle; }
   tr:last-child td { border-bottom:none; }
-  tr:hover td { background:#131f35; }
-  .env  { font-weight:600; color:#60A5FA; font-family:monospace; font-size:12px; }
-  .ts   { color:#475569; font-size:11px; }
+  tr:hover td { background:#102240; }
+  .env  { font-weight:600; color:#4B9CF5; font-family:monospace; font-size:12px; }
+  .ts   { color:#3A5070; font-size:11px; }
   .err  { color:#EF4444; font-size:11px; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .cnt  { color:#94A3B8; font-size:12px; }
-  .s-ok      { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#14532d; color:#22C55E; }
-  .s-issues  { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#451a03; color:#F59E0B; }
-  .s-down    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#450a0a; color:#EF4444; }
-  .s-pass    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#14532d; color:#22C55E; }
-  .s-fail    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#450a0a; color:#EF4444; }
+  .s-ok      { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#0A3020; color:#22C55E; }
+  .s-issues  { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#2D1800; color:#F59E0B; }
+  .s-down    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#2D0808; color:#EF4444; }
+  .s-pass    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#0A3020; color:#22C55E; }
+  .s-fail    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#2D0808; color:#EF4444; }
 </style>
 """
 
@@ -152,8 +152,24 @@ def escape(s):
 col_title, col_refresh = st.columns([6, 1])
 with col_title:
     st.markdown("""
-        <h1 style="font-size:26px;font-weight:700;color:#F8FAFC;margin:0;letter-spacing:-0.5px;">DataScout Ops Dashboard</h1>
-        <p style="font-size:13px;color:#475569;margin:6px 0 0;">Platform health across all environments</p>
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px;">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="18" cy="4"  r="3" fill="#1A6DD8"/>
+            <circle cx="28" cy="8"  r="3" fill="#1A6DD8"/>
+            <circle cx="32" cy="18" r="3" fill="#1A6DD8"/>
+            <circle cx="28" cy="28" r="3" fill="#1A6DD8"/>
+            <circle cx="18" cy="32" r="3" fill="#1A6DD8"/>
+            <circle cx="8"  cy="28" r="3" fill="#1A6DD8"/>
+            <circle cx="4"  cy="18" r="3" fill="#1A6DD8"/>
+            <circle cx="8"  cy="8"  r="3" fill="#1A6DD8"/>
+            <circle cx="18" cy="18" r="4" fill="#1A6DD8" opacity="0.4"/>
+          </svg>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#1A6DD8;line-height:1;">Bursting Silver</div>
+            <h1 style="font-size:22px;font-weight:800;color:#F0F4FF;margin:2px 0 0;letter-spacing:-0.5px;">DataScout Ops Dashboard</h1>
+          </div>
+        </div>
+        <p style="font-size:13px;color:#3A5070;margin:6px 0 0 50px;">Platform health across all environments</p>
     """, unsafe_allow_html=True)
 with col_refresh:
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
@@ -198,24 +214,24 @@ def latest_ts(rows):
 
 def summary_card(title, icon, main_val, main_label, main_color, sub_items, last_checked):
     subs = "".join([
-        f'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #1E293B;">'
-        f'<span style="font-size:13px;color:#94A3B8;font-weight:500;">{label}</span>'
+        f'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #1A2F4A;">'
+        f'<span style="font-size:13px;color:#5A7A9A;font-weight:500;">{label}</span>'
         f'<span style="font-size:15px;font-weight:700;color:{color};">{val}</span>'
         f'</div>'
         for val, label, color in sub_items
     ])
     return f"""
-    <div style="background:#0F172A;border:1px solid #1E293B;border-radius:14px;padding:24px 28px;height:100%;">
+    <div style="background:#0C1A2E;border:1px solid #1A2F4A;border-top:3px solid #1A6DD8;border-radius:14px;padding:24px 28px;height:100%;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
         <span style="font-size:20px;">{icon}</span>
-        <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#64748B;">{title}</span>
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#1A6DD8;">{title}</span>
       </div>
       <div style="font-size:52px;font-weight:800;color:{main_color};line-height:1;letter-spacing:-2px;">{main_val}</div>
-      <div style="font-size:13px;color:#64748B;margin-top:6px;font-weight:400;">{main_label}</div>
-      <div style="border-top:1px solid #1E293B;margin-top:20px;">{subs}</div>
+      <div style="font-size:13px;color:#5A7A9A;margin-top:6px;font-weight:400;">{main_label}</div>
+      <div style="border-top:1px solid #1A2F4A;margin-top:20px;">{subs}</div>
       <div style="margin-top:16px;display:flex;align-items:center;gap:6px;">
-        <span style="width:6px;height:6px;border-radius:50%;background:#22C55E;display:inline-block;flex-shrink:0;"></span>
-        <span style="font-size:12px;color:#94A3B8;">Last checked <strong style="color:#CBD5E1;">{last_checked}</strong></span>
+        <span style="width:6px;height:6px;border-radius:50%;background:#1A6DD8;display:inline-block;flex-shrink:0;"></span>
+        <span style="font-size:12px;color:#5A7A9A;">Last checked <strong style="color:#B0C8E8;">{last_checked}</strong></span>
       </div>
     </div>"""
 
