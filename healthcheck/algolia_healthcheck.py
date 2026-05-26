@@ -21,12 +21,21 @@ load_dotenv(REPO_ROOT / ".env")
 from onepassword_manager import OnePasswordManager
 
 CLIENT_IDS = [
-    "demo83",
-    "aaae", "atsdemo89", "aboncle", "armdemo96", "imisdemo11", "imis36",
-    "apimisdemo25", "imis87", "imis104", "demosales3", "demosales50", "demosales39",
-    "atdemo2", "atdemo81", "demo42", "bsidemo27", "demo86",
-    "ensyncdemo13", "i8vdemo13", "ibcdemo80", "isgdemo14", "isgdemo106",
-    "oasw", "cpanb",
+    # Clients
+    "aaae", "abca", "aboncle", "cpanb", "cpsu", "livediff", "nteu", "oasw", "trail",
+    # BSI Demo
+    "bsidemo27",
+    # Datascout Partner demos
+    "armdemo96", "atdemo2", "atdemo81", "atsdemo89", "atsdemo90",
+    "ensyncdemo13", "i8vdemo13", "ibcdemo80", "imis104", "imis87",
+    "isgdemo106", "isgdemo14", "demosales33",
+    # ASI demos
+    "apimisdemo25", "demosales3", "demosales28", "demosales39", "demosales50",
+    "imis36", "imisdemo11",
+    # Internal Datascout
+    "demo42", "demo83", "demo86",
+    # Union Pilot
+    "psansw",
 ]
 
 

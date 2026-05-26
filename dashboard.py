@@ -3,13 +3,20 @@ DataScout Ops Dashboard
 Run: python3 -m streamlit run dashboard.py
 """
 
+import base64
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 
 import streamlit as st
 import streamlit.components.v1 as components
 from dotenv import load_dotenv
 from supabase import create_client
+
+
+def _logo_b64() -> str:
+    path = Path(__file__).parent / "datascout_logo.png"
+    return base64.b64encode(path.read_bytes()).decode() if path.exists() else ""
 
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
@@ -17,7 +24,7 @@ load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 st.set_page_config(
     page_title="DataScout Ops — Bursting Silver",
-    page_icon="🔵",
+    page_icon="🦊",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -27,7 +34,7 @@ st.set_page_config(
 st.markdown("""
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-  html, body, [class*="css"] { font-family: 'Inter', sans-serif; background-color: #EDF2FB; color: #0D1B3E; }
+  html, body, [class*="css"] { font-family: 'Inter', sans-serif; background-color: #FFF8F4; color: #0D1B3E; }
   #MainMenu, footer, header { visibility: hidden; }
   .block-container { padding: 2rem 2rem 4rem; max-width: 1400px; }
   .section-label { font-size:15px; font-weight:700; letter-spacing:0.04em; color:#0D1B3E; margin-bottom:0.75rem; margin-top:2rem; }
@@ -37,20 +44,20 @@ st.markdown("""
   .pill-amber  { background:#FEF3C7; color:#B45309; }
   .pill-red    { background:#FEE2E2; color:#DC2626; }
   .pill-gray   { background:#E2E8F0; color:#64748B; }
-  .bot-card { background:#FFFFFF; border:1px solid #D0DDEF; border-radius:10px; padding:14px 16px; margin-bottom:10px; transition:border-color 0.2s, box-shadow 0.2s; }
-  .bot-card.up       { border-left:3px solid #16A34A; }
+  .bot-card { background:#F8F9FA; border:1px solid #F0D8C8; border-radius:10px; padding:14px 16px; margin-bottom:10px; transition:border-color 0.2s, box-shadow 0.2s; }
+  .bot-card.up       { border-left:3px solid #FC6305; }
   .bot-card.degraded { border-left:3px solid #D97706; }
   .bot-card.down     { border-left:3px solid #DC2626; }
-  a.bot-link { text-decoration:none; display:block; }
-  a.bot-link:hover .bot-card { border-color:#1A6DD8; box-shadow:0 2px 12px rgba(26,109,216,0.12); cursor:pointer; }
+  a.bot-link { text-decoration:none; display:block; color:#0D1B3E !important; }
+  a.bot-link:hover .bot-card { border-color:#FC6305; box-shadow:0 2px 12px rgba(252,99,5,0.14); cursor:pointer; }
   .bot-name { font-size:13px; font-weight:600; color:#0D1B3E; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .bot-badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; letter-spacing:0.05em; margin-bottom:8px; }
-  .badge-up       { background:#DCFCE7; color:#15803D; }
+  .badge-up       { background:#FFF0E6; color:#FC6305; }
   .badge-degraded { background:#FEF3C7; color:#B45309; }
   .badge-down     { background:#FEE2E2; color:#DC2626; }
   .bot-meta { font-size:11px; color:#7A90AA; display:flex; gap:10px; }
   .last-checked { font-size:11px; color:#8A9FBA; margin-top:5px; }
-  .ds-divider { border:none; border-top:1px solid #C8D8EE; margin:2rem 0 0; }
+  .ds-divider { border:none; border-top:1px solid #F0D8C8; margin:2rem 0 0; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -61,21 +68,23 @@ TABLE_CSS = """
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: transparent; font-family: 'Inter', sans-serif; }
-  .table-wrap { background:#FFFFFF; border:1px solid #D0DDEF; border-radius:10px; overflow:hidden; }
+  .table-wrap { background:#FFFFFF; border:1px solid #F0D8C8; border-radius:10px; overflow:hidden; }
   table { width:100%; border-collapse:collapse; font-size:13px; }
-  th { text-align:left; padding:9px 14px; color:#1A6DD8; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid #D0DDEF; background:#F5F9FF; }
-  td { padding:10px 14px; border-bottom:1px solid #EAF0FA; color:#0D1B3E; vertical-align:middle; }
+  th { text-align:left; padding:9px 14px; color:#FC6305; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid #F0D8C8; background:#FFF8F4; }
+  td { padding:10px 14px; border-bottom:1px solid #FDF0E8; color:#0D1B3E; vertical-align:middle; }
   tr:last-child td { border-bottom:none; }
-  tr:hover td { background:#F0F6FF; }
-  .env  { font-weight:600; color:#1A6DD8; font-family:monospace; font-size:12px; }
+  tr:hover td { background:#FFF3EC; }
+  .env  { font-weight:600; color:#0D1B3E; font-family:monospace; font-size:12px; }
   .ts   { color:#8A9FBA; font-size:11px; }
   .err  { color:#DC2626; font-size:11px; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .cnt  { color:#5A7A9A; font-size:12px; }
-  .s-ok      { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#DCFCE7; color:#15803D; }
+  .s-ok      { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#FFF0E6; color:#FC6305; }
   .s-issues  { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#FEF3C7; color:#B45309; }
   .s-down    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#FEE2E2; color:#DC2626; }
-  .s-pass    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#DCFCE7; color:#15803D; }
+  .s-pass    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#FFF0E6; color:#FC6305; }
   .s-fail    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#FEE2E2; color:#DC2626; }
+  .s-warn    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#FEF3C7; color:#B45309; }
+  .s-skip    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#E2E8F0; color:#64748B; }
 </style>
 """
 
@@ -136,7 +145,12 @@ def badge_class(s):
 
 def table_badge(s):
     s = (s or "").upper()
-    css = {"OK":"s-ok","ISSUES":"s-issues","DOWN":"s-down","PASS":"s-pass","FAIL":"s-fail"}.get(s,"s-down")
+    css = {
+        "OK":"s-ok","ISSUES":"s-issues","DOWN":"s-down",
+        "PASS":"s-pass","FAIL":"s-fail",
+        "AUTH_ERROR":"s-warn","NO_KEY":"s-warn","ERROR":"s-down",
+        "SKIP":"s-skip",
+    }.get(s,"s-down")
     return f'<span class="{css}">{s}</span>'
 
 def count_statuses(rows, field, values):
@@ -149,27 +163,23 @@ def escape(s):
 
 # ── Header ────────────────────────────────────────────────────────────────────
 
+_logo = _logo_b64()
+_logo_html = (
+    f'<img src="data:image/png;base64,{_logo}" width="88" height="88" style="border-radius:18px;flex-shrink:0;">'
+    if _logo else
+    '<span style="font-size:56px;">🦊</span>'
+)
+
 col_title, col_refresh = st.columns([6, 1])
 with col_title:
-    st.markdown("""
-        <div style="display:flex;align-items:center;gap:14px;margin-bottom:4px;">
-          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="18" cy="4"  r="3" fill="#1A6DD8"/>
-            <circle cx="28" cy="8"  r="3" fill="#1A6DD8"/>
-            <circle cx="32" cy="18" r="3" fill="#1A6DD8"/>
-            <circle cx="28" cy="28" r="3" fill="#1A6DD8"/>
-            <circle cx="18" cy="32" r="3" fill="#1A6DD8"/>
-            <circle cx="8"  cy="28" r="3" fill="#1A6DD8"/>
-            <circle cx="4"  cy="18" r="3" fill="#1A6DD8"/>
-            <circle cx="8"  cy="8"  r="3" fill="#1A6DD8"/>
-            <circle cx="18" cy="18" r="4" fill="#1A6DD8" opacity="0.4"/>
-          </svg>
+    st.markdown(f"""
+        <div style="display:flex;align-items:center;gap:18px;margin-bottom:4px;">
+          {_logo_html}
           <div>
-            <div style="font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:#1A6DD8;line-height:1;">Bursting Silver</div>
-            <h1 style="font-size:22px;font-weight:800;color:#0D1B3E;margin:2px 0 0;letter-spacing:-0.5px;">DataScout Ops Dashboard</h1>
+            <h1 style="font-size:22px;font-weight:800;color:#0D1B3E;margin:0;letter-spacing:-0.5px;">DataScout Ops Dashboard</h1>
+            <p style="font-size:13px;color:#7A90AA;margin:6px 0 0;">Platform health across all environments</p>
           </div>
         </div>
-        <p style="font-size:13px;color:#7A90AA;margin:6px 0 0 50px;">Platform health across all environments</p>
     """, unsafe_allow_html=True)
 with col_refresh:
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
@@ -193,6 +203,7 @@ with st.spinner("Loading..."):
     iqa_rows       = fetch_latest("iqa_checks", "environment")
     profile_rows   = fetch_latest("profile_checks", "environment")
     engage_rows    = fetch_latest("engage_checks", "org")
+    algolia_rows   = fetch_latest("algolia_checks", "environment")
 
 # ── Summary cards ─────────────────────────────────────────────────────────────
 
@@ -207,6 +218,9 @@ p_fail     = count_statuses(profile_rows, "status", ["FAIL"])
 e_ok       = count_statuses(engage_rows, "status", ["OK"])
 e_slow     = count_statuses(engage_rows, "status", ["SLOW"])
 e_down     = count_statuses(engage_rows, "status", ["DOWN"])
+a_ok       = count_statuses(algolia_rows, "status", ["OK"])
+a_warn     = count_statuses(algolia_rows, "status", ["AUTH_ERROR", "NO_KEY"])
+a_down     = count_statuses(algolia_rows, "status", ["DOWN", "ERROR"])
 
 def latest_ts(rows):
     ts = max((r.get("checked_at") or "" for r in rows), default="")
@@ -214,28 +228,27 @@ def latest_ts(rows):
 
 def summary_card(title, icon, main_val, main_label, main_color, sub_items, last_checked):
     subs = "".join([
-        f'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #EAF0FA;">'
+        f'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #FDF0E8;">'
         f'<span style="font-size:13px;color:#7A90AA;font-weight:500;">{label}</span>'
         f'<span style="font-size:15px;font-weight:700;color:{color};">{val}</span>'
         f'</div>'
         for val, label, color in sub_items
     ])
     return f"""
-    <div style="background:#FFFFFF;border:1px solid #D0DDEF;border-top:3px solid #1A6DD8;border-radius:14px;padding:24px 28px;height:100%;box-shadow:0 1px 6px rgba(26,109,216,0.06);">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;">
-        <span style="font-size:20px;">{icon}</span>
-        <span style="font-size:14px;font-weight:700;letter-spacing:0.03em;color:#1A6DD8;">{title}</span>
+    <div style="background:#FFFFFF;border:1px solid #F0D8C8;border-top:3px solid #FC6305;border-radius:14px;padding:24px 28px;height:100%;box-shadow:0 1px 6px rgba(252,99,5,0.06);">
+      <div style="margin-bottom:20px;">
+        <span style="font-size:14px;font-weight:700;letter-spacing:0.03em;color:#FC6305;">{title}</span>
       </div>
-      <div style="font-size:52px;font-weight:800;color:{main_color};line-height:1;letter-spacing:-2px;">{main_val}</div>
+      <div style="font-size:52px;font-weight:800;color:#0D1B3E;line-height:1;letter-spacing:-2px;">{main_val}</div>
       <div style="font-size:13px;color:#7A90AA;margin-top:6px;font-weight:400;">{main_label}</div>
-      <div style="border-top:1px solid #EAF0FA;margin-top:20px;">{subs}</div>
+      <div style="border-top:1px solid #FDF0E8;margin-top:20px;">{subs}</div>
       <div style="margin-top:16px;display:flex;align-items:center;gap:6px;">
-        <span style="width:6px;height:6px;border-radius:50%;background:#1A6DD8;display:inline-block;flex-shrink:0;"></span>
-        <span style="font-size:12px;color:#8A9FBA;">Last checked <strong style="color:#1A6DD8;">{last_checked}</strong></span>
+        <span style="width:6px;height:6px;border-radius:50%;background:#FC6305;display:inline-block;flex-shrink:0;"></span>
+        <span style="font-size:12px;color:#8A9FBA;">Last checked <strong style="color:#FC6305;">{last_checked}</strong></span>
       </div>
     </div>"""
 
-c1, c2, c3, c4 = st.columns(4)
+c1, c2, c3, c4, c5 = st.columns(5)
 with c1:
     c_total = c_up + c_degraded + c_down
     st.markdown(summary_card(
@@ -267,6 +280,14 @@ with c4:
         e_ok, f"of {e_total} orgs OK", "#16A34A",
         [(e_slow, "Slow", "#D97706"), (e_down, "Down", "#DC2626")],
         latest_ts(engage_rows)
+    ), unsafe_allow_html=True)
+with c5:
+    a_total = a_ok + a_warn + a_down
+    st.markdown(summary_card(
+        "Algolia", "🔎",
+        a_ok, f"of {a_total} apps OK", "#16A34A",
+        [(a_warn, "Auth / No key", "#D97706"), (a_down, "Down", "#DC2626")],
+        latest_ts(algolia_rows)
     ), unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top:2rem'></div>", unsafe_allow_html=True)
@@ -324,22 +345,22 @@ else:
     IQA_EXPAND_CSS = """
     <style>
       .iqa-row { cursor: pointer; }
-      .iqa-row:hover td { background: #1a2740 !important; }
-      .iqa-row td:first-child .chevron { display:inline-block; margin-right:6px; color:#475569; font-size:10px; transition:transform 0.2s; }
-      .iqa-row.open td:first-child .chevron { transform: rotate(90deg); color:#60A5FA; }
+      .iqa-row:hover td { background: #FFF3EC !important; }
+      .iqa-row td:first-child .chevron { display:inline-block; margin-right:6px; color:#94A3B8; font-size:10px; transition:transform 0.2s; }
+      .iqa-row.open td:first-child .chevron { transform: rotate(90deg); color:#FC6305; }
       .detail-row { display:none; }
       .detail-row.open { display:table-row; }
-      .detail-cell { padding:0 14px 12px 32px !important; border-bottom:1px solid #1E293B; background:#0a1120 !important; }
+      .detail-cell { padding:0 14px 12px 32px !important; border-bottom:1px solid #FDF0E8; background:#FFF8F4 !important; }
       .detail-inner { display:flex; gap:24px; flex-wrap:wrap; padding-top:8px; }
       .detail-group { min-width:180px; }
       .detail-group-title { font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; margin-bottom:6px; }
-      .detail-group-title.broken { color:#EF4444; }
-      .detail-group-title.missing { color:#F59E0B; }
+      .detail-group-title.broken { color:#DC2626; }
+      .detail-group-title.missing { color:#B45309; }
       .detail-group-title.params  { color:#64748B; }
-      .iqa-path { font-family:monospace; font-size:11px; color:#94A3B8; margin-bottom:3px; }
-      .iqa-path.broken  { color:#FCA5A5; }
-      .iqa-path.missing { color:#FCD34D; }
-      .no-issues { font-size:11px; color:#475569; padding:4px 0; }
+      .iqa-path { font-family:monospace; font-size:11px; color:#5A7A9A; margin-bottom:3px; }
+      .iqa-path.broken  { color:#DC2626; }
+      .iqa-path.missing { color:#B45309; }
+      .no-issues { font-size:11px; color:#8A9FBA; padding:4px 0; }
     </style>
     """
 
@@ -367,7 +388,8 @@ else:
         broken  = details.get("broken", [])
         missing = details.get("missing", [])
         params  = details.get("params", [])
-        has_details = bool(broken or missing)
+        params_issue = issues > 0 and not broken and not missing and params
+        has_details = bool(broken or missing or params_issue)
         chevron = '<span class="chevron">▶</span>' if has_details else '<span style="display:inline-block;width:16px;margin-right:6px"></span>'
 
         rows_html += f"""<tr class="iqa-row" data-id="{i}">
@@ -392,9 +414,15 @@ else:
                 for p in missing:
                     detail_html += f'<div class="iqa-path missing">{escape(p)}</div>'
                 detail_html += '</div>'
+            if params_issue:
+                detail_html += '<div class="detail-group">'
+                detail_html += '<div class="detail-group-title params">Unexpected Params</div>'
+                for p in params:
+                    detail_html += f'<div class="iqa-path params">{escape(p)}</div>'
+                detail_html += '</div>'
             detail_html += '</div>'
         else:
-            detail_html = '<div class="no-issues">No broken or missing IQAs.</div>'
+            detail_html = '<div class="no-issues">No issues found.</div>'
 
         rows_html += f"""<tr class="detail-row" id="detail-{i}">
           <td class="detail-cell" colspan="4">{detail_html}</td>
@@ -489,6 +517,42 @@ else:
     <div class="table-wrap">
       <table>
         <thead><tr><th>Org</th><th>Status</th><th>Load</th><th>Errors</th><th>Details</th><th>Last Checked</th></tr></thead>
+        <tbody>{rows_html}</tbody>
+      </table>
+    </div>""", height=height, scrolling=False)
+
+# ── Section 5: Algolia table ─────────────────────────────────────────────────
+
+st.markdown("<hr class='ds-divider'><div class='section-label'>Algolia</div>", unsafe_allow_html=True)
+
+if not algolia_rows:
+    st.info("No Algolia data yet. Run the Algolia Healthcheck to populate.")
+else:
+    sorted_algolia = sorted(
+        algolia_rows,
+        key=lambda r: ({"OK":3,"NO_KEY":2,"AUTH_ERROR":1,"DOWN":0,"ERROR":0}.get((r.get("status") or "DOWN").upper(), 0), r.get("environment","")),
+        reverse=True
+    )
+    rows_html = ""
+    for r in sorted_algolia:
+        env    = escape(r.get("environment", "—"))
+        status = r.get("status", "—")
+        app_id = escape(r.get("app_id") or "—")
+        ts     = escape(fmt_ts(r.get("checked_at")))
+        error  = escape(r.get("error") or "")
+        rows_html += f"""<tr>
+          <td><span class="env">{env}</span></td>
+          <td><span style="font-family:monospace;font-size:11px;color:#5A7A9A;">{app_id}</span></td>
+          <td>{table_badge(status)}</td>
+          <td><span class="err" title="{error}">{"" if not error or status.upper() == "OK" else error[:60]}</span></td>
+          <td><span class="ts">{ts}</span></td>
+        </tr>"""
+
+    height = 60 + len(sorted_algolia) * 42
+    components.html(f"""{TABLE_CSS}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Environment</th><th>App ID</th><th>Status</th><th>Error</th><th>Last Checked</th></tr></thead>
         <tbody>{rows_html}</tbody>
       </table>
     </div>""", height=height, scrolling=False)
