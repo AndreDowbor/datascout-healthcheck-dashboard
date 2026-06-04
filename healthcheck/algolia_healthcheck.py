@@ -52,21 +52,38 @@ def check_algolia_app(app_id: str, search_key: str) -> dict:
     if not search_key:
         return {"status": "NO_KEY", "error": "app exists but no search key in 1Password"}
 
+    headers = {
+        "X-Algolia-Application-Id": app_id,
+        "X-Algolia-API-Key": search_key,
+    }
+
     try:
+        # List indices to confirm app is reachable
         resp = requests.get(
             f"https://{host}/1/indexes",
-            headers={
-                "X-Algolia-Application-Id": app_id,
-                "X-Algolia-API-Key": search_key,
-            },
+            headers=headers,
             timeout=10,
         )
-        if resp.status_code == 200:
-            return {"status": "OK", "error": None}
-        elif resp.status_code in (401, 403):
+        if resp.status_code in (401, 403):
             return {"status": "AUTH_ERROR", "error": f"HTTP {resp.status_code} — key may be rotated"}
-        else:
+        if resp.status_code != 200:
             return {"status": "ERROR", "error": f"HTTP {resp.status_code}"}
+
+        # Keep-alive: run a real search on the first available index so Algolia
+        # counts this as activity and does not archive the app due to inactivity.
+        indices = resp.json().get("items", [])
+        if indices:
+            index_name = indices[0].get("name", "")
+            if index_name:
+                requests.post(
+                    f"https://{host}/1/indexes/{index_name}/query",
+                    headers={**headers, "Content-Type": "application/json"},
+                    json={"query": "", "hitsPerPage": 1},
+                    timeout=10,
+                )
+
+        return {"status": "OK", "error": None}
+
     except requests.exceptions.RequestException as e:
         return {"status": "ERROR", "error": str(e)[:120]}
 
