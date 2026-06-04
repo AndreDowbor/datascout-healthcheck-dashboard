@@ -27,7 +27,7 @@ CLIENT_IDS = [
     "bsidemo27",
     # Datascout Partner demos
     "armdemo96", "atdemo2", "atdemo81", "atsdemo89", "atsdemo90",
-    "ensyncdemo13", "i8vdemo13", "ibcdemo80", "imis104", "imis87",
+    "demo14", "ensyncdemo13", "i8vdemo13", "ibcdemo80", "imis104", "imis87",
     "isgdemo106", "isgdemo14", "demosales33",
     # ASI demos
     "apimisdemo25", "demosales3", "demosales28", "demosales39", "demosales50",
