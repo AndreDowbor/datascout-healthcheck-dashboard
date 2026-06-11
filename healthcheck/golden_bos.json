@@ -1,0 +1,392 @@
+{
+  "golden_record": "demo83",
+  "captured_at": "2026-06-11T13:01:43.967665+00:00",
+  "business_objects": {
+    "DataScout_Data": {
+      "total_records": 5479,
+      "properties": [
+        {
+          "name": "ContactKey",
+          "sample_value": "208aa47d-ea06-4088-bddb-000cf2ddace4",
+          "type": "str"
+        },
+        {
+          "name": "ID",
+          "sample_value": "22683",
+          "type": "str"
+        },
+        {
+          "name": "Is_Past_Due",
+          "sample_value": "True",
+          "type": "bool"
+        },
+        {
+          "name": "Age_Group",
+          "sample_value": "45 - 60",
+          "type": "str"
+        },
+        {
+          "name": "FSA",
+          "sample_value": "",
+          "type": "str"
+        },
+        {
+          "name": "Individual_Or_Company",
+          "sample_value": "Individual",
+          "type": "str"
+        },
+        {
+          "name": "is_New_Member",
+          "sample_value": "False",
+          "type": "bool"
+        },
+        {
+          "name": "Is_Member",
+          "sample_value": "True",
+          "type": "bool"
+        },
+        {
+          "name": "gender",
+          "sample_value": "Male",
+          "type": "str"
+        },
+        {
+          "name": "language_preference",
+          "sample_value": "english",
+          "type": "str"
+        }
+      ],
+      "error": null
+    },
+    "DataScout_Member_Properties": {
+      "total_records": 73,
+      "properties": [
+        {
+          "name": "ID",
+          "sample_value": "126",
+          "type": "str"
+        },
+        {
+          "name": "Ordinal",
+          "sample_value": "1",
+          "type": "int"
+        },
+        {
+          "name": "CreatedByUserKey",
+          "sample_value": "d3ac5b59-4f8a-4571-9b2f-59aa6e64adcd",
+          "type": "str"
+        },
+        {
+          "name": "PropertyName",
+          "sample_value": "ds.next_action",
+          "type": "str"
+        },
+        {
+          "name": "PropertyType",
+          "sample_value": "text",
+          "type": "str"
+        },
+        {
+          "name": "PropertyValue",
+          "sample_value": "{\"status\": 200, \"success\": true, \"data\": {\"overall_brief\": \"Simon Jones, a Senior Accountant from Ed",
+          "type": "str"
+        },
+        {
+          "name": "UpdatedByUserKey",
+          "sample_value": "d3ac5b59-4f8a-4571-9b2f-59aa6e64adcd",
+          "type": "str"
+        },
+        {
+          "name": "CreatedOn",
+          "sample_value": "2025-04-15T21:31:21.237",
+          "type": "str"
+        },
+        {
+          "name": "UpdatedOn",
+          "sample_value": "2025-04-15T21:31:21.237",
+          "type": "str"
+        }
+      ],
+      "error": null
+    },
+    "Datascout_AYR_Member_Calc": {
+      "total_records": 1961,
+      "properties": [
+        {
+          "name": "Id",
+          "sample_value": "101",
+          "type": "str"
+        },
+        {
+          "name": "lifetime_value",
+          "sample_value": "6307.25",
+          "type": "float"
+        },
+        {
+          "name": "Average_Yearly_Revenue",
+          "sample_value": "123.67",
+          "type": "float"
+        }
+      ],
+      "error": null
+    },
+    "Datascout_Changelog": {
+      "total_records": 38168,
+      "properties": [
+        {
+          "name": "ChangeDate",
+          "sample_value": "1997-08-21T14:10:00",
+          "type": "str"
+        },
+        {
+          "name": "ChangedByUserId",
+          "sample_value": "MANAGER",
+          "type": "str"
+        },
+        {
+          "name": "ChangeLogId",
+          "sample_value": "Party-160-150845",
+          "type": "str"
+        },
+        {
+          "name": "CurrentValue",
+          "sample_value": "",
+          "type": "str"
+        },
+        {
+          "name": "IdentityEntityTypeName",
+          "sample_value": "Party",
+          "type": "str"
+        },
+        {
+          "name": "IdentityIdentityElement",
+          "sample_value": "160",
+          "type": "str"
+        },
+        {
+          "name": "LogText",
+          "sample_value": "Test1, Test1",
+          "type": "str"
+        },
+        {
+          "name": "ObjectTypeName",
+          "sample_value": "",
+          "type": "str"
+        },
+        {
+          "name": "Ordinal",
+          "sample_value": "0",
+          "type": "int"
+        },
+        {
+          "name": "OriginalValue",
+          "sample_value": "",
+          "type": "str"
+        },
+        {
+          "name": "PropertyName",
+          "sample_value": "",
+          "type": "str"
+        },
+        {
+          "name": "Subtype",
+          "sample_value": "ADD",
+          "type": "str"
+        }
+      ],
+      "error": null
+    },
+    "Datascout_Genlookup_GENDER": {
+      "total_records": 4,
+      "properties": [
+        {
+          "name": "CODE",
+          "sample_value": "A",
+          "type": "str"
+        },
+        {
+          "name": "DESCRIPTION",
+          "sample_value": "Prefer not to answer",
+          "type": "str"
+        }
+      ],
+      "error": null
+    },
+    "Datascout_Max_Name_Log": {
+      "total_records": null,
+      "properties": [],
+      "error": "HTTP 500"
+    },
+    "datascout_Max_Change_Log": {
+      "total_records": 0,
+      "properties": [],
+      "error": null
+    },
+    "Datascout_Revenue": {
+      "total_records": 4964,
+      "properties": [
+        {
+          "name": "lifetime_value",
+          "sample_value": "0.0",
+          "type": "float"
+        },
+        {
+          "name": "Average_Yearly_Revenue",
+          "sample_value": "0.0",
+          "type": "float"
+        },
+        {
+          "name": "Ship_to_Id",
+          "sample_value": "104",
+          "type": "str"
+        },
+        {
+          "name": "Ytd_spend",
+          "sample_value": "0.0",
+          "type": "float"
+        },
+        {
+          "name": "Previous_Year_Spend",
+          "sample_value": "0.0",
+          "type": "float"
+        },
+        {
+          "name": "Bill_To_Id",
+          "sample_value": "104",
+          "type": "str"
+        }
+      ],
+      "error": null
+    },
+    "Datascout_Revenue_Association": {
+      "total_records": 1,
+      "properties": [
+        {
+          "name": "Average_Yearly_Revenue",
+          "sample_value": "88.67744",
+          "type": "float"
+        },
+        {
+          "name": "Average_Lifetime_Value",
+          "sample_value": "1146.58002",
+          "type": "float"
+        }
+      ],
+      "error": null
+    },
+    "Datascout_Roster": {
+      "total_records": 281,
+      "properties": [
+        {
+          "name": "id",
+          "sample_value": "101",
+          "type": "str"
+        },
+        {
+          "name": "Roster_Count",
+          "sample_value": "3",
+          "type": "int"
+        }
+      ],
+      "error": null
+    },
+    "Datascout_Tag_Changes": {
+      "total_records": 18827,
+      "properties": [
+        {
+          "name": "Created_On",
+          "sample_value": "2025-04-14T14:59:35.36",
+          "type": "str"
+        },
+        {
+          "name": "id",
+          "sample_value": "103",
+          "type": "str"
+        },
+        {
+          "name": "OriginalValue",
+          "sample_value": "systemuser",
+          "type": "str"
+        },
+        {
+          "name": "Ordinal",
+          "sample_value": "44",
+          "type": "int"
+        }
+      ],
+      "error": null
+    },
+    "Datascout_Tag_Refresh_Date_Fields": {
+      "total_records": 5479,
+      "properties": [
+        {
+          "name": "ID",
+          "sample_value": "101",
+          "type": "str"
+        },
+        {
+          "name": "is_birthday_today",
+          "sample_value": "1900-01-01",
+          "type": "str"
+        },
+        {
+          "name": "Tenure_Day",
+          "sample_value": "1900-01-01",
+          "type": "str"
+        },
+        {
+          "name": "Paid_Through_Date",
+          "sample_value": "2011-10-31",
+          "type": "str"
+        }
+      ],
+      "error": null
+    },
+    "Datascout_Tags": {
+      "total_records": 50011,
+      "properties": [
+        {
+          "name": "ID",
+          "sample_value": "101",
+          "type": "str"
+        },
+        {
+          "name": "Ordinal",
+          "sample_value": "83",
+          "type": "int"
+        },
+        {
+          "name": "CreatedByUserKey",
+          "sample_value": "d3ac5b59-4f8a-4571-9b2f-59aa6e64adcd",
+          "type": "str"
+        },
+        {
+          "name": "CreatedOn",
+          "sample_value": "2025-04-14T14:59:29.873",
+          "type": "str"
+        },
+        {
+          "name": "TagType",
+          "sample_value": "System",
+          "type": "str"
+        },
+        {
+          "name": "TagValue",
+          "sample_value": "active-member",
+          "type": "str"
+        },
+        {
+          "name": "UpdatedByUserKey",
+          "sample_value": "d3ac5b59-4f8a-4571-9b2f-59aa6e64adcd",
+          "type": "str"
+        },
+        {
+          "name": "UpdatedOn",
+          "sample_value": "2025-04-14T14:59:29.873",
+          "type": "str"
+        }
+      ],
+      "error": null
+    }
+  }
+}
