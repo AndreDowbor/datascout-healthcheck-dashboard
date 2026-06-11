@@ -141,6 +141,12 @@ if __name__ == "__main__":
         cwd=BASE,
     )
 
+    results["BO Healthcheck"] = run(
+        label="BO Healthcheck",
+        script=os.path.join(BASE, "healthcheck", "bo_healthcheck.py"),
+        cwd=BASE,
+    )
+
     results["Algolia Healthcheck"] = run(
         label="Algolia Healthcheck",
         script=os.path.join(BASE, "healthcheck", "algolia_healthcheck.py"),

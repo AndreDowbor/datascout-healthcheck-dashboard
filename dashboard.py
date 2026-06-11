@@ -204,6 +204,7 @@ with st.spinner("Loading..."):
     profile_rows   = fetch_latest("profile_checks", "environment")
     engage_rows    = fetch_latest("engage_checks", "org")
     algolia_rows   = fetch_latest("algolia_checks", "environment")
+    bo_rows        = fetch_latest("bo_checks", "environment")
 
 # ── Summary cards ─────────────────────────────────────────────────────────────
 
@@ -221,6 +222,9 @@ e_down     = count_statuses(engage_rows, "status", ["DOWN"])
 a_ok       = count_statuses(algolia_rows, "status", ["OK"])
 a_warn     = count_statuses(algolia_rows, "status", ["AUTH_ERROR", "NO_KEY"])
 a_down     = count_statuses(algolia_rows, "status", ["DOWN", "ERROR"])
+b_ok       = count_statuses(bo_rows, "status", ["OK"])
+b_issues   = count_statuses(bo_rows, "status", ["ISSUES"])
+b_down     = count_statuses(bo_rows, "status", ["DOWN"])
 
 def latest_ts(rows):
     ts = max((r.get("checked_at") or "" for r in rows), default="")
@@ -248,7 +252,7 @@ def summary_card(title, icon, main_val, main_label, main_color, sub_items, last_
       </div>
     </div>"""
 
-c1, c2, c3, c4, c5 = st.columns(5)
+c1, c2, c3, c4, c5, c6 = st.columns(6)
 with c1:
     c_total = c_up + c_degraded + c_down
     st.markdown(summary_card(
@@ -266,6 +270,14 @@ with c2:
         latest_ts(iqa_rows)
     ), unsafe_allow_html=True)
 with c3:
+    b_total = b_ok + b_issues + b_down
+    st.markdown(summary_card(
+        "Business Objects", "🗄️",
+        b_ok, f"of {b_total} environments OK", "#16A34A",
+        [(b_issues, "With issues", "#D97706"), (b_down, "Down", "#DC2626")],
+        latest_ts(bo_rows)
+    ), unsafe_allow_html=True)
+with c4:
     p_total = p_pass + p_fail
     st.markdown(summary_card(
         "Profile Checks", "👤",
@@ -273,7 +285,7 @@ with c3:
         [(0, "Degraded", "#D97706"), (p_fail, "Failing", "#DC2626")],
         latest_ts(profile_rows)
     ), unsafe_allow_html=True)
-with c4:
+with c5:
     e_total = e_ok + e_slow + e_down
     st.markdown(summary_card(
         "Engage", "⚡",
@@ -281,7 +293,7 @@ with c4:
         [(e_slow, "Slow", "#D97706"), (e_down, "Down", "#DC2626")],
         latest_ts(engage_rows)
     ), unsafe_allow_html=True)
-with c5:
+with c6:
     a_total = a_ok + a_warn + a_down
     st.markdown(summary_card(
         "Algolia", "🔎",
@@ -439,7 +451,83 @@ else:
     </div>
     {IQA_EXPAND_JS}""", height=height, scrolling=True)
 
-# ── Section 3: Profile table ──────────────────────────────────────────────────
+# ── Section 3: Business Objects table ────────────────────────────────────────
+
+st.markdown("<hr class='ds-divider'><div class='section-label'>Business Objects</div>", unsafe_allow_html=True)
+
+if not bo_rows:
+    st.info("No BO data yet. Run the BO Healthcheck to populate.")
+else:
+    sorted_bo = sorted(
+        bo_rows,
+        key=lambda r: ({"OK":2,"ISSUES":1,"DOWN":0}.get((r.get("status") or "DOWN").upper(), 0), r.get("environment","")),
+        reverse=True
+    )
+
+    BO_EXPAND_JS = """
+    <script>
+      document.querySelectorAll('.bo-row').forEach(function(row) {
+        row.addEventListener('click', function() {
+          var id = this.dataset.id;
+          var detail = document.getElementById('bo-detail-' + id);
+          if (!detail) return;
+          this.classList.toggle('open');
+          detail.classList.toggle('open');
+        });
+      });
+    </script>
+    """
+
+    rows_html = ""
+    for i, r in enumerate(sorted_bo):
+        env    = escape(r.get("environment", "—"))
+        status = r.get("status", "—")
+        issues = r.get("issues_count", 0)
+        ts     = escape(fmt_ts(r.get("checked_at")))
+        details = r.get("details") or {}
+        missing = details.get("missing", [])
+        broken  = details.get("broken", [])
+        has_details = bool(missing or broken)
+        chevron = '<span class="chevron">▶</span>' if has_details else '<span style="display:inline-block;width:16px;margin-right:6px"></span>'
+
+        rows_html += f"""<tr class="iqa-row bo-row" data-id="{i}">
+          <td><span class="env">{chevron}{env}</span></td>
+          <td>{table_badge(status)}</td>
+          <td><span class="cnt">{issues if issues else "—"}</span></td>
+          <td><span class="ts">{ts}</span></td>
+        </tr>"""
+
+        if has_details:
+            detail_html = '<div class="detail-inner">'
+            if missing:
+                detail_html += '<div class="detail-group"><div class="detail-group-title missing">Missing</div>'
+                for bo in missing:
+                    detail_html += f'<div class="iqa-path missing">{escape(bo)}</div>'
+                detail_html += '</div>'
+            if broken:
+                detail_html += '<div class="detail-group"><div class="detail-group-title broken">Broken</div>'
+                for bo in broken:
+                    detail_html += f'<div class="iqa-path broken">{escape(bo)}</div>'
+                detail_html += '</div>'
+            detail_html += '</div>'
+        else:
+            detail_html = '<div class="no-issues">All BOs present.</div>'
+
+        rows_html += f"""<tr class="detail-row" id="bo-detail-{i}">
+          <td class="detail-cell" colspan="4">{detail_html}</td>
+        </tr>"""
+
+    height = 60 + len(sorted_bo) * 42
+    components.html(f"""{TABLE_CSS}{IQA_EXPAND_CSS}
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Environment</th><th>Status</th><th>Issues</th><th>Last Checked</th></tr></thead>
+        <tbody>{rows_html}</tbody>
+      </table>
+    </div>
+    {BO_EXPAND_JS}""", height=height, scrolling=True)
+
+# ── Section 5: Profile table ──────────────────────────────────────────────────
 
 st.markdown("<hr class='ds-divider'><div class='section-label'>Profile Checks</div>", unsafe_allow_html=True)
 
@@ -476,7 +564,7 @@ else:
       </table>
     </div>""", height=height, scrolling=False)
 
-# ── Section 4: Engage table ───────────────────────────────────────────────────
+# ── Section 6: Engage table ───────────────────────────────────────────────────
 
 st.markdown("<hr class='ds-divider'><div class='section-label'>Engage</div>", unsafe_allow_html=True)
 
@@ -521,7 +609,7 @@ else:
       </table>
     </div>""", height=height, scrolling=False)
 
-# ── Section 5: Algolia table ─────────────────────────────────────────────────
+# ── Section 7: Algolia table ─────────────────────────────────────────────────
 
 st.markdown("<hr class='ds-divider'><div class='section-label'>Algolia</div>", unsafe_allow_html=True)
 
