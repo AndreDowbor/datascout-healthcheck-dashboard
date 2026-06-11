@@ -56,7 +56,8 @@
           "type": "str"
         }
       ],
-      "error": null
+      "error": null,
+      "bo_type": "standard"
     },
     "DataScout_Member_Properties": {
       "total_records": 73,
@@ -107,7 +108,9 @@
           "type": "str"
         }
       ],
-      "error": null
+      "error": null,
+      "bo_type": "source_panel",
+      "note": "Source panel \u2014 requires member ID context. 403 without parameter is expected."
     },
     "Datascout_AYR_Member_Calc": {
       "total_records": 1961,
@@ -128,7 +131,8 @@
           "type": "float"
         }
       ],
-      "error": null
+      "error": null,
+      "bo_type": "standard"
     },
     "Datascout_Changelog": {
       "total_records": 38168,
@@ -194,7 +198,8 @@
           "type": "str"
         }
       ],
-      "error": null
+      "error": null,
+      "bo_type": "standard"
     },
     "Datascout_Genlookup_GENDER": {
       "total_records": 4,
@@ -210,17 +215,21 @@
           "type": "str"
         }
       ],
-      "error": null
+      "error": null,
+      "bo_type": "standard"
     },
     "Datascout_Max_Name_Log": {
       "total_records": null,
       "properties": [],
-      "error": "HTTP 500"
+      "error": "HTTP 500",
+      "bo_type": "standard",
+      "note": "HTTP 500 on direct API call \u2014 no parameter accepted. Internal server-side issue, not a deployment problem."
     },
     "datascout_Max_Change_Log": {
       "total_records": 0,
       "properties": [],
-      "error": null
+      "error": null,
+      "bo_type": "standard"
     },
     "Datascout_Revenue": {
       "total_records": 4964,
@@ -256,7 +265,8 @@
           "type": "str"
         }
       ],
-      "error": null
+      "error": null,
+      "bo_type": "standard"
     },
     "Datascout_Revenue_Association": {
       "total_records": 1,
@@ -272,7 +282,8 @@
           "type": "float"
         }
       ],
-      "error": null
+      "error": null,
+      "bo_type": "standard"
     },
     "Datascout_Roster": {
       "total_records": 281,
@@ -288,7 +299,8 @@
           "type": "int"
         }
       ],
-      "error": null
+      "error": null,
+      "bo_type": "standard"
     },
     "Datascout_Tag_Changes": {
       "total_records": 18827,
@@ -314,7 +326,8 @@
           "type": "int"
         }
       ],
-      "error": null
+      "error": null,
+      "bo_type": "standard"
     },
     "Datascout_Tag_Refresh_Date_Fields": {
       "total_records": 5479,
@@ -340,7 +353,8 @@
           "type": "str"
         }
       ],
-      "error": null
+      "error": null,
+      "bo_type": "standard"
     },
     "Datascout_Tags": {
       "total_records": 50011,
@@ -386,7 +400,9 @@
           "type": "str"
         }
       ],
-      "error": null
+      "error": null,
+      "bo_type": "source_panel",
+      "note": "Source panel \u2014 requires member ID context. 403 without parameter is expected."
     }
   }
 }
