@@ -15,7 +15,8 @@ from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
-PYTHON = sys.executable
+import shutil
+PYTHON = shutil.which("python3.11") or shutil.which("python3") or sys.executable
 BASE   = os.path.dirname(os.path.abspath(__file__))
 LOG_DIR = os.path.join(BASE, "logs")
 os.makedirs(LOG_DIR, exist_ok=True)
@@ -127,12 +128,13 @@ if __name__ == "__main__":
     )
     alert_production_failures("IQA")
 
+    PROFILE_DIR = os.path.join(BASE, "New_Profile_Tester")
     results["Profile Tester"] = run(
         label="Profile Tester",
-        script="/Users/andredowbor/Projects/work/datascout/new-profile-tester/imis_env_tester_with_1password.py",
-        cwd="/Users/andredowbor/Projects/work/datascout/new-profile-tester",
+        script=os.path.join(PROFILE_DIR, "imis_env_tester_with_1password.py"),
+        cwd=PROFILE_DIR,
     )
-    push_profile_results("/Users/andredowbor/Projects/work/datascout/new-profile-tester/test_results.json")
+    push_profile_results(os.path.join(PROFILE_DIR, "test_results.json"))
     alert_production_failures("Profile")
 
     results["Engage Healthcheck"] = run(

@@ -20,10 +20,20 @@ from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeo
 
 # ── Load credentials ──────────────────────────────────────────────────────────
 REPO_ROOT    = Path(__file__).resolve().parents[1]
-ENGAGE_ROOT  = Path("/Users/andredowbor/Projects/work/datascout/engage-automation")
+# Locate engage-automation: env var override → sibling of this repo → legacy path
+_engage_root_candidates = [
+    os.getenv("ENGAGE_ROOT"),
+    str(REPO_ROOT.parent / "engage-automation"),
+    "/Users/andredowbor/Projects/work/datascout/engage-automation",
+]
+ENGAGE_ROOT = next(
+    (Path(p) for p in _engage_root_candidates if p and Path(p).exists()),
+    None,
+)
 
 load_dotenv(REPO_ROOT / ".env")
-load_dotenv(ENGAGE_ROOT / ".env", override=False)
+if ENGAGE_ROOT:
+    load_dotenv(ENGAGE_ROOT / ".env", override=False)
 
 # ── Config ────────────────────────────────────────────────────────────────────
 EMAIL       = os.getenv("ENGAGE_EMAIL")
