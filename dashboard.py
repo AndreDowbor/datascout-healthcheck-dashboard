@@ -107,7 +107,12 @@ def fetch_latest(table: str, group_col: str, limit: int = 500) -> list[dict]:
     res = sb.table(table).select("*").order("checked_at", desc=True).limit(limit).execute()
     seen = {}
     for row in res.data:
-        key = row.get(group_col)
+        # Include "url" in the key: some tables (e.g. concierge_checks) reuse
+        # the same name/environment for two distinct check variants (direct
+        # chat URL vs. iMIS member-login flow), which would otherwise collide
+        # and silently drop one of the two checks. There's no "type" column
+        # to disambiguate on, but the url always differs between variants.
+        key = (row.get(group_col), row.get("url"))
         if key not in seen:
             seen[key] = row
     return list(seen.values())
@@ -154,8 +159,10 @@ def table_badge(s):
     return f'<span class="{css}">{s}</span>'
 
 def count_statuses(rows, field, values):
+    # startswith (not exact equality) because some statuses carry a reason
+    # suffix, e.g. "DEGRADED (no-widget)" should still count as "DEGRADED".
     vals = [v.upper() for v in values]
-    return sum(1 for r in rows if (r.get(field) or "").upper() in vals)
+    return sum(1 for r in rows if (r.get(field) or "").upper().startswith(tuple(vals)))
 
 def escape(s):
     return (s or "").replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace('"',"&quot;")
@@ -369,9 +376,11 @@ else:
       .detail-group-title.broken { color:#DC2626; }
       .detail-group-title.missing { color:#B45309; }
       .detail-group-title.params  { color:#64748B; }
+      .detail-group-title.errored { color:#7C3AED; }
       .iqa-path { font-family:monospace; font-size:11px; color:#5A7A9A; margin-bottom:3px; }
       .iqa-path.broken  { color:#DC2626; }
       .iqa-path.missing { color:#B45309; }
+      .iqa-path.errored { color:#7C3AED; }
       .no-issues { font-size:11px; color:#8A9FBA; padding:4px 0; }
     </style>
     """
@@ -487,7 +496,8 @@ else:
         details = r.get("details") or {}
         missing = details.get("missing", [])
         broken  = details.get("broken", [])
-        has_details = bool(missing or broken)
+        errored = details.get("errored", [])
+        has_details = bool(missing or broken or errored)
         chevron = '<span class="chevron">▶</span>' if has_details else '<span style="display:inline-block;width:16px;margin-right:6px"></span>'
 
         rows_html += f"""<tr class="iqa-row bo-row" data-id="{i}">
@@ -508,6 +518,11 @@ else:
                 detail_html += '<div class="detail-group"><div class="detail-group-title broken">Broken</div>'
                 for bo in broken:
                     detail_html += f'<div class="iqa-path broken">{escape(bo)}</div>'
+                detail_html += '</div>'
+            if errored:
+                detail_html += '<div class="detail-group"><div class="detail-group-title errored">Timed Out / Error</div>'
+                for bo in errored:
+                    detail_html += f'<div class="iqa-path errored">{escape(bo)}</div>'
                 detail_html += '</div>'
             detail_html += '</div>'
         else:
