@@ -1,0 +1,430 @@
+{
+  "check_times_per_day": 4,
+  "schedule_anchor": "00:00",
+  "test_message": "Show me upcoming events",
+  "playwright_headless": true,
+  "log_max_bytes": 5242880,
+  "log_backup_count": 5,
+  "urls": [
+    {
+      "name": "tia",
+      "url": "https://engage.staging.app.datascout.ai/tia/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "aamft",
+      "url": "https://engage.staging.app.datascout.ai/aamft/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "imis36",
+      "url": "https://engage.staging.app.datascout.ai/imis36/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "aao",
+      "url": "https://engage.staging.app.datascout.ai/aao/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "imis87",
+      "url": "https://engage.staging.app.datascout.ai/imis87/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "imisdemo11",
+      "url": "https://engage.staging.app.datascout.ai/imisdemo11/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demo83",
+      "url": "https://engage.staging.app.datascout.ai/demo83/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demosales3",
+      "url": "https://engage.staging.app.datascout.ai/demosales3/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "apimisdemo25",
+      "url": "https://engage.staging.app.datascout.ai/apimisdemo25/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demosales50",
+      "url": "https://engage.staging.app.datascout.ai/demosales50/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "imis104",
+      "url": "https://engage.staging.app.datascout.ai/imis104/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "bayeast",
+      "url": "https://engage.staging.app.datascout.ai/bayeast/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "aaae",
+      "url": "https://engage.app.datascout.ai/aaae/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "aboncle",
+      "url": "https://engage.app.datascout.ai/aboncle/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "aana",
+      "url": "https://engage.staging.app.datascout.ai/aana/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "abs",
+      "url": "https://engage.staging.app.datascout.ai/abs/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "msci",
+      "url": "https://engage.staging.app.datascout.ai/msci/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "nafem",
+      "url": "https://engage.staging.app.datascout.ai/nafem/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "acofp",
+      "url": "https://engage.staging.app.datascout.ai/acofp/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "aisc",
+      "url": "https://engage.staging.app.datascout.ai/aisc/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "aapmr",
+      "url": "https://engage.staging.app.datascout.ai/aapmr/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "mmi",
+      "url": "https://engage.staging.app.datascout.ai/mmi/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "eas",
+      "url": "https://engage.staging.app.datascout.ai/eas/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "zonta",
+      "url": "https://engage.staging.app.datascout.ai/zonta/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "mira",
+      "url": "https://engage.staging.app.datascout.ai/mira/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "mma",
+      "url": "https://engage.staging.app.datascout.ai/mma/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "msbo",
+      "url": "https://engage.staging.app.datascout.ai/msbo/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 90
+    },
+    {
+      "name": "mba",
+      "url": "https://engage.staging.app.datascout.ai/mba/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demosales39",
+      "url": "https://engage.staging.app.datascout.ai/demosales39/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "tcdla",
+      "url": "https://engage.staging.app.datascout.ai/tcdla/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "naela",
+      "url": "https://engage.staging.app.datascout.ai/naela/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "astra",
+      "url": "https://engage.staging.app.datascout.ai/astra/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "tms",
+      "url": "https://engage.staging.app.datascout.ai/tms/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "nmhc",
+      "url": "https://engage.staging.app.datascout.ai/nmhc/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "cpmn",
+      "url": "https://engage.staging.app.datascout.ai/cpmn/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "autm",
+      "url": "https://engage.staging.app.datascout.ai/autm/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "ascrs",
+      "url": "https://engage.staging.app.datascout.ai/ascrs/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "asgct",
+      "url": "https://engage.staging.app.datascout.ai/asgct/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "nsp",
+      "url": "https://engage.staging.app.datascout.ai/nsp/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "icle",
+      "url": "https://engage.staging.app.datascout.ai/icle/chat",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demo83",
+      "type": "imis_member",
+      "url": "https://demoaisp83.imiscloud.com/web/",
+      "imis_key": "demo83",
+      "response_container_selector": null,
+      "http_timeout": 20,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "apimisdemo25",
+      "type": "imis_member",
+      "url": "https://apdemosales25.imiscloud.com/web/",
+      "imis_key": "apimisdemo25",
+      "response_container_selector": null,
+      "http_timeout": 25,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "imis36",
+      "type": "imis_member",
+      "url": "https://demosales36.imiscloud.com/web/",
+      "imis_key": "imis36",
+      "response_container_selector": null,
+      "http_timeout": 25,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "imisdemo11",
+      "type": "imis_member",
+      "url": "https://demosales11.imiscloud.com/web/",
+      "imis_key": "imisdemo11",
+      "response_container_selector": null,
+      "http_timeout": 25,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "imis87",
+      "type": "imis_member",
+      "url": "https://demosales87.imiscloud.com/web/",
+      "imis_key": "imis87",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "imis104",
+      "type": "imis_member",
+      "url": "https://demosales104.imiscloud.com/web/",
+      "imis_key": "imis104",
+      "response_container_selector": null,
+      "http_timeout": 25,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demosales3",
+      "type": "imis_member",
+      "url": "https://demosales3.imiscloud.com/web/",
+      "imis_key": "demosales3",
+      "response_container_selector": null,
+      "http_timeout": 25,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "bsidemo27",
+      "type": "imis_member",
+      "url": "https://demoaisp27.imiscloud.com/Web/MemberHome.aspx",
+      "imis_key": "bsidemo27",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demosales50",
+      "type": "imis_member",
+      "url": "https://demosales50.imiscloud.com/web/",
+      "imis_key": "demosales50",
+      "response_container_selector": null,
+      "http_timeout": 20,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demosales39",
+      "type": "imis_member",
+      "url": "https://apdemosales39.imiscloud.com/Web/MemberHome.aspx",
+      "imis_key": "demosales39",
+      "response_container_selector": null,
+      "http_timeout": 10,
+      "widget_timeout": 30,
+      "chat_timeout": 60
+    }
+  ]
+}

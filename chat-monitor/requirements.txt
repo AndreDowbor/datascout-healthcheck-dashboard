@@ -1,0 +1,9 @@
+# Concierge Chat Monitor — dependencies
+# Install: pip install -r requirements.txt
+# Then:    playwright install chromium
+
+httpx==0.27.*
+playwright==1.44.*
+supabase==2.31.0
+python-dotenv>=1.0.0
+pyotp>=2.9.0
