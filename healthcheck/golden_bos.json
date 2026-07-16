@@ -245,48 +245,6 @@
       ],
       "error": null,
       "bo_type": "standard"
-    },
-    "Datascout_Tag_Refresh_Date_Fields": {
-      "total_records": 5432,
-      "properties": [
-        {
-          "name": "ID",
-          "sample_value": "1",
-          "type": "str"
-        },
-        {
-          "name": "birth_date",
-          "sample_value": "0001-01-01T00:00:00",
-          "type": "str"
-        },
-        {
-          "name": "Join_Date",
-          "sample_value": "0001-01-01T00:00:00",
-          "type": "str"
-        },
-        {
-          "name": "is_birthday_today",
-          "sample_value": "1900-01-01",
-          "type": "str"
-        },
-        {
-          "name": "Tenure_Day",
-          "sample_value": "1900-01-01",
-          "type": "str"
-        },
-        {
-          "name": "Paid_Through",
-          "sample_value": "0001-01-01T00:00:00",
-          "type": "str"
-        },
-        {
-          "name": "Paid_Through_Date",
-          "sample_value": "",
-          "type": "str"
-        }
-      ],
-      "error": null,
-      "bo_type": "standard"
     }
   }
 }
