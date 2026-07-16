@@ -31,12 +31,11 @@ REQUEST_TIMEOUT = 15
 
 CLIENT_IDS = [
     "demo83",
-    "aaae", "atsdemo89", "aboncle", "armdemo96", "imisdemo11", "imis36",
+    "atsdemo89", "armdemo96", "imisdemo11", "imis36",
     "apimisdemo25", "imis87", "imis104", "demosales3", "demosales50", "demosales39", "demosales28",
     "atdemo2", "atdemo81", "demo14", "demo42", "bsidemo27", "demo86",
     "ensyncdemo13", "i8vdemo13", "ibcdemo80", "isgdemo14", "isgdemo106",
-    "oasw", "cpanb", "psansw",
-    "abca", "nteu", "atsdemo90", "demosales33", "demosales44",
+    "atsdemo90", "demosales33", "demosales44",
 ]
 
 # BOs that behave as source panels — 403/400 without a member ID is expected,
