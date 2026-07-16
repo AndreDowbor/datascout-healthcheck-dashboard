@@ -29,6 +29,12 @@ GOLDEN_RECORD  = "demo42"
 GOLDEN_BOS_FILE = REPO_ROOT / "healthcheck" / "golden_bos.json"
 REQUEST_TIMEOUT = 15
 
+# There's no per-name discovery API for Business Objects (unlike IQAs, which
+# live in a browsable $/_DataScout folder). The full BO catalog — including
+# stock iMIS objects — lives under this path instead; we filter to
+# DataScout-named ones to find custom BOs that exist but aren't golden.
+BO_ROOT = "$/Common/Business Objects"
+
 CLIENT_IDS = [
     "demo83",
     "atsdemo89", "armdemo96", "imisdemo11", "imis36",
@@ -82,6 +88,28 @@ def check_env(client: IMISClient, golden_bos: dict) -> dict:
     return results
 
 
+def discover_extra_bos(client: IMISClient, golden_bos: dict) -> list | None:
+    """
+    Return DataScout-named BOs that exist in this environment but aren't in
+    the golden set. Returns None if discovery itself failed (not evidence
+    there are no extras — just that we couldn't check).
+    """
+    golden_lower = {name.lower() for name in golden_bos}
+    try:
+        docs = client.list_documents_in_folder(BO_ROOT)
+    except Exception:
+        return None
+
+    extra = []
+    for doc in docs:
+        if doc.get("Type") != "BUS":
+            continue
+        name = (doc.get("Path") or "").rsplit("/", 1)[-1]
+        if name.lower().startswith("datascout") and name.lower() not in golden_lower:
+            extra.append(name)
+    return sorted(extra)
+
+
 async def main():
     with open(GOLDEN_BOS_FILE) as f:
         golden = json.load(f)
@@ -126,17 +154,18 @@ async def main():
                 "environment": client_id,
                 "status": "DOWN",
                 "issues_count": len(checkable_bos),
-                "details": {"error": str(e)[:120], "missing": [], "broken": []},
+                "details": {"error": str(e)[:120], "missing": [], "broken": [], "extra": []},
                 "checked_at": checked_at,
             })
             continue
 
         bo_results = check_env(imis, golden_bos)
+        extra_bos  = discover_extra_bos(imis, golden_bos)
 
         missing = [bo for bo, s in bo_results.items() if s == "missing"]
         broken  = [bo for bo, s in bo_results.items() if s == "broken"]
         errored = [bo for bo, s in bo_results.items() if s == "error"]
-        issues_count = len(missing) + len(broken) + len(errored)
+        issues_count = len(missing) + len(broken) + len(errored) + len(extra_bos or [])
 
         if issues_count == 0:
             status = "OK"
@@ -147,11 +176,17 @@ async def main():
         for bo, s in bo_results.items():
             print(f"  {icons.get(s, '?')}  {bo}")
 
+        if extra_bos is None:
+            print("  ⚠️  Extra-BO discovery failed — skipping (not evidence there are none).")
+        else:
+            for name in extra_bos:
+                print(f"  🟣  {name} (extra, not in golden)")
+
         all_results.append({
             "environment": client_id,
             "status": status,
             "issues_count": issues_count,
-            "details": {"missing": missing, "broken": broken, "errored": errored},
+            "details": {"missing": missing, "broken": broken, "errored": errored, "extra": extra_bos or []},
             "checked_at": checked_at,
         })
 

@@ -37,18 +37,15 @@ SAMPLE_LIMIT    = 5
 REQUEST_TIMEOUT = 15
 
 # Per-environment timeout overrides (seconds) for envs with large databases
-ENV_TIMEOUTS = {
-    "aboncle": 30,
-}
+ENV_TIMEOUTS = {}
 
 CLIENT_IDS = [
     "demo83",
-    "aaae", "atsdemo89", "aboncle", "armdemo96", "imisdemo11", "imis36",
+    "atsdemo89", "armdemo96", "imisdemo11", "imis36",
     "apimisdemo25", "imis87", "imis104", "demosales3", "demosales50", "demosales39", "demosales28",
     "atdemo2", "atdemo81", "demo14", "demo42", "bsidemo27", "demo86",
     "ensyncdemo13", "i8vdemo13", "ibcdemo80", "isgdemo14", "isgdemo106",
-    "oasw", "cpanb", "psansw",
-    "abca", "nteu", "atsdemo90", "demosales33", "demosales44",
+    "atsdemo90", "demosales33", "demosales44",
 ]
 
 URL_OVERRIDES = {
@@ -163,7 +160,9 @@ def probe_iqa(client: IMISClient, path: str, limit: int = 5, timeout: int = 15, 
 
 def build_html(now_str, df_data, n_envs, n_iqas, golden_record,
                login_failed_envs, not_deployed_envs, broken_data,
-               unexpected_params_data, missing_data, environment_credentials):
+               unexpected_params_data, missing_data, environment_credentials,
+               extra_data=None):
+    extra_data = extra_data or {}
     RED    = "#f85149"
     YELLOW = "#e3b341"
 
@@ -253,6 +252,19 @@ def build_html(now_str, df_data, n_envs, n_iqas, golden_record,
                 f"<div class='affected'>Affected: {envs}</div>"
             )
 
+    # Section 4
+    if not extra_data:
+        s4 = ok("No extra IQAs found outside the golden record.")
+    else:
+        s4 = ""
+        for iqa, envs in extra_data.items():
+            envs = sorted(envs)
+            n = len(envs)
+            s4 += card(
+                f"<div class='iqa-name purple'>🟣 {iqa} <span class='badge'>{n} env{'s' if n>1 else ''}</span></div>"
+                f"<div class='affected'>Found in: {', '.join(envs)}</div>"
+            )
+
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -286,6 +298,7 @@ def build_html(now_str, df_data, n_envs, n_iqas, golden_record,
   .iqa-name{{font-size:13px;font-weight:600;margin-bottom:6px}}
   .iqa-name.red{{color:#f85149}}
   .iqa-name.yellow{{color:#e3b341}}
+  .iqa-name.purple{{color:#a371f7}}
   .affected{{font-size:12px;color:#8b949e;font-family:"SF Mono",Menlo,monospace;margin-top:4px}}
   .badge{{display:inline-block;background:#21262d;color:#8b949e;border-radius:10px;padding:1px 8px;font-size:11px;font-weight:500;margin-left:6px;vertical-align:middle}}
   .ok{{color:#3fb950;font-size:13px;padding:4px 0}}
@@ -299,6 +312,7 @@ def build_html(now_str, df_data, n_envs, n_iqas, golden_record,
 {section("🔴", "Section 1 — Environments Down", "#f85149", s1)}
 {section("🔴", "Section 2 — Broken IQAs", "#f85149", s2)}
 {section("🟡", "Section 3 — IQA Issues", "#e3b341", s3)}
+{section("🟣", "Section 4 — Extra IQAs (not in golden record)", "#a371f7", s4)}
 </body>
 </html>"""
 
@@ -307,7 +321,7 @@ def build_html(now_str, df_data, n_envs, n_iqas, golden_record,
 
 def push_to_supabase(all_results, login_failed_envs, not_deployed_envs,
                      broken_data, unexpected_params_data, missing_data, checked_at,
-                     expected_params_paths=None):
+                     expected_params_paths=None, extra_results=None):
     sb_url = os.getenv("DASHBOARD_SUPABASE_URL", "")
     sb_key = os.getenv("DASHBOARD_SUPABASE_KEY", "")
     if not sb_url or not sb_key:
@@ -317,11 +331,14 @@ def push_to_supabase(all_results, login_failed_envs, not_deployed_envs,
     from supabase import create_client
     supabase = create_client(sb_url, sb_key)
 
+    extra_results = extra_results or []
+
     # Build per-environment summary rows
     envs_seen = {r["env"] for r in all_results}
     rows = []
     for env in envs_seen:
         env_results = [r for r in all_results if r["env"] == env]
+        env_extras  = [r["path"] for r in extra_results if r["env"] == env]
 
         if any(r["env"] == env for r in login_failed_envs):
             status = "DOWN"
@@ -335,7 +352,8 @@ def push_to_supabase(all_results, login_failed_envs, not_deployed_envs,
                 r["status"] == "params" and r["path"] not in expected
                 for r in env_results
             )
-            if has_broken or has_missing or has_unexpected_params:
+            has_extra = bool(env_extras)
+            if has_broken or has_missing or has_unexpected_params or has_extra:
                 status = "ISSUES"
             else:
                 status = "OK"
@@ -345,7 +363,7 @@ def push_to_supabase(all_results, login_failed_envs, not_deployed_envs,
             1 for r in env_results
             if r["status"] in ("broken", "missing")
             or (r["status"] == "params" and r["path"] not in expected)
-        )
+        ) + len(env_extras)
 
         rows.append({
             "environment": env,
@@ -355,6 +373,7 @@ def push_to_supabase(all_results, login_failed_envs, not_deployed_envs,
                 "broken":  [r["path"] for r in env_results if r["status"] == "broken"],
                 "missing": [r["path"] for r in env_results if r["status"] == "missing"],
                 "params":  [r["path"] for r in env_results if r["status"] == "params" and r["path"] not in expected],
+                "extra":   env_extras,
             },
             "checked_at": checked_at,
         })
@@ -415,6 +434,7 @@ async def main():
 
     # Run checks
     all_results = []
+    extra_results = []  # IQAs present in an env but absent from the golden record
     for client_id, creds in environment_credentials.items():
         print(f"\n── {client_id} ──")
         try:
@@ -433,6 +453,7 @@ async def main():
                 doc["Path"] for doc in env_docs
                 if doc.get("Type") == "IQD"
                 and not (doc.get("Path") or "").startswith(DEMO_EXCLUDE)
+                and (doc.get("Path") or "") not in IQA_EXCLUDE_PATHS
             }
         except Exception as e:
             # Some iMIS versions don't implement the recursive folder-listing
@@ -451,6 +472,13 @@ async def main():
                 result = probe_iqa(imis, path, limit=SAMPLE_LIMIT, timeout=timeout)
             print(f"  {STATUS_ICON[result['status']]:<18} {path}")
             all_results.append({"env": client_id, "path": path, **result})
+
+        # IQAs present in this environment but not part of the golden set —
+        # only possible to tell when folder discovery above actually worked.
+        if env_paths is not None:
+            for extra_path in sorted(env_paths - set(golden_paths)):
+                print(f"  {'🟣 Extra':<18} {extra_path}")
+                extra_results.append({"env": client_id, "path": extra_path})
 
     global_duration = round(time.time() - global_start, 2)
     print(f"\n\n⏱️  Completed in {global_duration}s across {len(environment_credentials)} environments.")
@@ -492,6 +520,12 @@ async def main():
             iqa = r["path"].replace("$/_DataScout/", "")
             missing_data.setdefault(iqa, []).append(r)
 
+    extra_data = {}
+    for r in extra_results:
+        if r["env"] not in ignore_envs:
+            iqa = r["path"].replace("$/_DataScout/", "")
+            extra_data.setdefault(iqa, []).append(r["env"])
+
     # Save HTML report
     now      = dt.datetime.now()
     now_str  = now.strftime("%Y-%m-%d %H:%M")
@@ -505,7 +539,8 @@ async def main():
 
     html = build_html(now_str, all_results, n_envs, n_iqas, GOLDEN_RECORD,
                       login_failed_envs, not_deployed_envs, broken_data,
-                      unexpected_params_data, missing_data, environment_credentials)
+                      unexpected_params_data, missing_data, environment_credentials,
+                      extra_data=extra_data)
     report_path.write_text(html, encoding="utf-8")
     print(f"✅ Report saved → {report_path}")
     webbrowser.open(report_path.as_uri())
@@ -514,7 +549,7 @@ async def main():
     checked_at = dt.datetime.now(dt.timezone.utc).isoformat()
     push_to_supabase(all_results, login_failed_envs, not_deployed_envs,
                      broken_data, unexpected_params_data, missing_data, checked_at,
-                     expected_params_paths=expected_params_paths)
+                     expected_params_paths=expected_params_paths, extra_results=extra_results)
 
 
 if __name__ == "__main__":
