@@ -29,7 +29,7 @@ from common.onepassword_manager import OnePasswordManager
 from common.imis_client import IMISClient
 
 # ── Config ─────────────────────────────────────────────────────────────────
-GOLDEN_RECORD   = "demo83"
+GOLDEN_RECORD   = "demo42"
 IQA_ROOT        = "$/_DataScout"
 DEMO_EXCLUDE    = "$/_DataScout/Demo"
 IQA_EXCLUDE_PATHS = {"$/_DataScout/TestJamesQuery"}
@@ -47,7 +47,8 @@ CLIENT_IDS = [
     "apimisdemo25", "imis87", "imis104", "demosales3", "demosales50", "demosales39", "demosales28",
     "atdemo2", "atdemo81", "demo14", "demo42", "bsidemo27", "demo86",
     "ensyncdemo13", "i8vdemo13", "ibcdemo80", "isgdemo14", "isgdemo106",
-    "oasw", "cpanb",
+    "oasw", "cpanb", "psansw",
+    "abca", "nteu", "atsdemo90", "demosales33", "demosales44",
 ]
 
 URL_OVERRIDES = {
@@ -130,11 +131,28 @@ def probe_iqa(client: IMISClient, path: str, limit: int = 5, timeout: int = 15, 
             "sample_rows": sample, "error_msg": None, "duration_sec": duration,
         }
     else:  # 400 — could be "params required" or a SQL/server error
-        try:    msg = resp.json().get("Message") or resp.text[:300]
-        except: msg = resp.text[:300]
+        try:
+            data = resp.json()
+            msg = data.get("Message")
+            if not msg:
+                # Most environments nest errors directly under "Errors".
+                # Some iMIS versions (e.g. psansw) wrap it one level deeper
+                # under "ValidationResults" (Asi.Soa...ValidateResultsData).
+                errors = (data.get("Errors") or {}).get("$values", [])
+                if not errors:
+                    errors = ((data.get("ValidationResults") or {}).get("Errors") or {}).get("$values", [])
+                if errors:
+                    msg = errors[0].get("Message")
+            if not msg:
+                msg = resp.text[:300]
+        except Exception:
+            msg = resp.text[:300]
         # SQL errors (overflow, conversion, etc.) are real failures, not missing params
         SQL_ERROR_SIGNALS = ("overflow", "arithmetic", "conversion failed", "invalid column", "divide by zero")
-        if any(s in msg.lower() for s in SQL_ERROR_SIGNALS):
+        # "Query: ... not found" — IQA exists in the doc tree but its API/web-service
+        # access has been disabled (or it was deleted server-side). Not a params issue.
+        NOT_FOUND_SIGNALS = ("not found",)
+        if any(s in msg.lower() for s in SQL_ERROR_SIGNALS) or any(s in msg.lower() for s in NOT_FOUND_SIGNALS):
             return {"status": "broken", "http_status": 400, "total_count": 0,
                     "sample_rows": [], "error_msg": msg, "duration_sec": duration}
         return {"status": "params", "http_status": 400, "total_count": 0,
@@ -336,7 +354,7 @@ def push_to_supabase(all_results, login_failed_envs, not_deployed_envs,
             "details": {
                 "broken":  [r["path"] for r in env_results if r["status"] == "broken"],
                 "missing": [r["path"] for r in env_results if r["status"] == "missing"],
-                "params":  [r["path"] for r in env_results if r["status"] == "params"],
+                "params":  [r["path"] for r in env_results if r["status"] == "params" and r["path"] not in expected],
             },
             "checked_at": checked_at,
         })
@@ -417,11 +435,15 @@ async def main():
                 and not (doc.get("Path") or "").startswith(DEMO_EXCLUDE)
             }
         except Exception as e:
-            print(f"  ⚠️  IQA discovery failed: {e}")
-            env_paths = set()
+            # Some iMIS versions don't implement the recursive folder-listing
+            # operation at all (501 Not Implemented) — that's a discovery
+            # limitation, not evidence the IQAs are missing. Fall back to
+            # probing every golden path directly instead of assuming absence.
+            print(f"  ⚠️  IQA discovery failed ({e}) — probing paths directly instead of trusting the doc tree.")
+            env_paths = None
 
         for path in golden_paths:
-            if path not in env_paths:
+            if env_paths is not None and path not in env_paths:
                 result = {"status": "missing", "http_status": None, "total_count": 0,
                           "sample_rows": [], "error_msg": "Not in document tree", "duration_sec": 0}
             else:

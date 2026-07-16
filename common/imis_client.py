@@ -666,9 +666,13 @@ class IMISClient:
         }
         response = self.make_request("POST", url, json.dumps(body), headers)
         doc_data = response.json()
+        # Most environments wrap the DocumentData in a "Result" key, but some
+        # iMIS versions (e.g. psansw) return the DocumentData object directly.
         result = doc_data.get("Result")
         if isinstance(result, dict):
             return result.get("DocumentId")
+        if "DocumentId" in doc_data:
+            return doc_data.get("DocumentId")
         return None
     
     def _get_folder_document_summaries(self, document_id: str) -> Dict[str, Any]:

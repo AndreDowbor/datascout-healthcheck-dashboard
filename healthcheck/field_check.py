@@ -30,6 +30,7 @@ CLIENT_IDS = [
     "atdemo2", "atdemo81", "demo42", "bsidemo27", "demo86",
     "ensyncdemo13", "i8vdemo13", "ibcdemo80", "isgdemo14", "isgdemo106",
     "oasw", "cpanb",
+    "psansw", "abca", "nteu", "atsdemo90", "demosales33", "demosales44",
 ]
 
 URL_OVERRIDES = {
@@ -126,13 +127,13 @@ async def main(iqa_name: str, field_name: str, iqa_full_path: str | None = None)
 
     print(f"Loaded {len(environment_credentials)} environments.\n")
 
-    # ── Step 1: Discover exact IQA path from demo83 ─────────────────────────
-    ref_env = "demo83"
+    # ── Step 1: Discover exact IQA path from demo42 ─────────────────────────
+    ref_env = "demo42"
     print(f"REFERENCE: {ref_env} — discovering IQA path...")
 
     ref_creds = environment_credentials.get(ref_env)
     if not ref_creds:
-        print(f"  ❌ demo83 credentials not found. Aborting.")
+        print(f"  ❌ {ref_env} credentials not found. Aborting.")
         return
 
     ref_client = IMISClient(ref_creds["imis_base_url"], ref_creds["username"], ref_creds["password"])
@@ -148,12 +149,12 @@ async def main(iqa_name: str, field_name: str, iqa_full_path: str | None = None)
         else:
             print(f"  ✅ Found IQA path: {iqa_path}")
 
-    # ── Step 2: Check reference (demo83) ────────────────────────────────────
-    print(f"\n── demo83 (reference) ──")
+    # ── Step 2: Check reference (demo42) ────────────────────────────────────
+    print(f"\n── {ref_env} (reference) ──")
     ref_result = check_field_in_env(ref_client, iqa_path, field_name)
 
     if ref_result["status"] == "iqa_not_found":
-        print(f"  ❌ IQA not found in demo83 at path '{iqa_path}'")
+        print(f"  ❌ IQA not found in {ref_env} at path '{iqa_path}'")
         print("  Cannot proceed without a valid reference. Check the IQA name.")
         return
     elif ref_result["status"] == "error":

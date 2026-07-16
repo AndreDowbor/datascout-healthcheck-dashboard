@@ -1,6 +1,6 @@
 """
 bo_healthcheck.py — Checks DataScout Business Object presence across all environments.
-Compares against the golden record (demo83) defined in healthcheck/golden_bos.json.
+Compares against the golden record (demo42) defined in healthcheck/golden_bos.json.
 Pushes a summary to Supabase after each run.
 
 Usage:
@@ -25,7 +25,7 @@ load_dotenv(REPO_ROOT / ".env")
 from common.onepassword_manager import OnePasswordManager
 from common.imis_client import IMISClient
 
-GOLDEN_RECORD  = "demo83"
+GOLDEN_RECORD  = "demo42"
 GOLDEN_BOS_FILE = REPO_ROOT / "healthcheck" / "golden_bos.json"
 REQUEST_TIMEOUT = 15
 
@@ -35,12 +35,13 @@ CLIENT_IDS = [
     "apimisdemo25", "imis87", "imis104", "demosales3", "demosales50", "demosales39", "demosales28",
     "atdemo2", "atdemo81", "demo14", "demo42", "bsidemo27", "demo86",
     "ensyncdemo13", "i8vdemo13", "ibcdemo80", "isgdemo14", "isgdemo106",
-    "oasw", "cpanb",
+    "oasw", "cpanb", "psansw",
+    "abca", "nteu", "atsdemo90", "demosales33", "demosales44",
 ]
 
 # BOs that behave as source panels — 403/400 without a member ID is expected,
 # but 404 means genuinely missing.
-SOURCE_PANELS = {"DataScout_Member_Properties", "Datascout_Tags"}
+SOURCE_PANELS = {"DataScout_Member_Properties"}
 
 # BOs with known server-side issues in all environments — skip checking.
 SKIP_BOS = {"Datascout_Max_Name_Log"}
@@ -135,14 +136,15 @@ async def main():
 
         missing = [bo for bo, s in bo_results.items() if s == "missing"]
         broken  = [bo for bo, s in bo_results.items() if s == "broken"]
-        issues_count = len(missing) + len(broken)
+        errored = [bo for bo, s in bo_results.items() if s == "error"]
+        issues_count = len(missing) + len(broken) + len(errored)
 
         if issues_count == 0:
             status = "OK"
         else:
             status = "ISSUES"
 
-        icons = {"present": "✅", "missing": "❌", "broken": "⚠️ ", "skipped": "–"}
+        icons = {"present": "✅", "missing": "❌", "broken": "⚠️ ", "skipped": "–", "error": "⏱️ "}
         for bo, s in bo_results.items():
             print(f"  {icons.get(s, '?')}  {bo}")
 
@@ -150,7 +152,7 @@ async def main():
             "environment": client_id,
             "status": status,
             "issues_count": issues_count,
-            "details": {"missing": missing, "broken": broken},
+            "details": {"missing": missing, "broken": broken, "errored": errored},
             "checked_at": checked_at,
         })
 

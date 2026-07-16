@@ -1,9 +1,9 @@
 {
-  "golden_record": "demo83",
-  "captured_at": "2026-06-11T13:01:43.967665+00:00",
+  "golden_record": "demo42",
+  "captured_at": "2026-07-09T16:45:00+00:00",
   "business_objects": {
     "DataScout_Data": {
-      "total_records": 5479,
+      "total_records": 5432,
       "properties": [
         {
           "name": "ContactKey",
@@ -60,60 +60,14 @@
       "bo_type": "standard"
     },
     "DataScout_Member_Properties": {
-      "total_records": 73,
-      "properties": [
-        {
-          "name": "ID",
-          "sample_value": "126",
-          "type": "str"
-        },
-        {
-          "name": "Ordinal",
-          "sample_value": "1",
-          "type": "int"
-        },
-        {
-          "name": "CreatedByUserKey",
-          "sample_value": "d3ac5b59-4f8a-4571-9b2f-59aa6e64adcd",
-          "type": "str"
-        },
-        {
-          "name": "PropertyName",
-          "sample_value": "ds.next_action",
-          "type": "str"
-        },
-        {
-          "name": "PropertyType",
-          "sample_value": "text",
-          "type": "str"
-        },
-        {
-          "name": "PropertyValue",
-          "sample_value": "{\"status\": 200, \"success\": true, \"data\": {\"overall_brief\": \"Simon Jones, a Senior Accountant from Ed",
-          "type": "str"
-        },
-        {
-          "name": "UpdatedByUserKey",
-          "sample_value": "d3ac5b59-4f8a-4571-9b2f-59aa6e64adcd",
-          "type": "str"
-        },
-        {
-          "name": "CreatedOn",
-          "sample_value": "2025-04-15T21:31:21.237",
-          "type": "str"
-        },
-        {
-          "name": "UpdatedOn",
-          "sample_value": "2025-04-15T21:31:21.237",
-          "type": "str"
-        }
-      ],
+      "total_records": null,
+      "properties": [],
       "error": null,
       "bo_type": "source_panel",
-      "note": "Source panel \u2014 requires member ID context. 403 without parameter is expected."
+      "note": "Source panel — requires member ID context. 403 without parameter is expected."
     },
     "Datascout_AYR_Member_Calc": {
-      "total_records": 1961,
+      "total_records": 1969,
       "properties": [
         {
           "name": "Id",
@@ -127,7 +81,7 @@
         },
         {
           "name": "Average_Yearly_Revenue",
-          "sample_value": "123.67",
+          "sample_value": "126.15",
           "type": "float"
         }
       ],
@@ -135,21 +89,21 @@
       "bo_type": "standard"
     },
     "Datascout_Changelog": {
-      "total_records": 38168,
+      "total_records": 6049,
       "properties": [
         {
           "name": "ChangeDate",
-          "sample_value": "1997-08-21T14:10:00",
+          "sample_value": "1999-06-09T00:00:00",
           "type": "str"
         },
         {
           "name": "ChangedByUserId",
-          "sample_value": "MANAGER",
+          "sample_value": "BRIANM",
           "type": "str"
         },
         {
           "name": "ChangeLogId",
-          "sample_value": "Party-160-150845",
+          "sample_value": "Party-104-151694",
           "type": "str"
         },
         {
@@ -164,12 +118,12 @@
         },
         {
           "name": "IdentityIdentityElement",
-          "sample_value": "160",
+          "sample_value": "104",
           "type": "str"
         },
         {
           "name": "LogText",
-          "sample_value": "Test1, Test1",
+          "sample_value": "Dr. Charles R. Corwin, PhD., Foundation Support Systems",
           "type": "str"
         },
         {
@@ -186,32 +140,22 @@
           "name": "OriginalValue",
           "sample_value": "",
           "type": "str"
-        },
-        {
-          "name": "PropertyName",
-          "sample_value": "",
-          "type": "str"
-        },
-        {
-          "name": "Subtype",
-          "sample_value": "ADD",
-          "type": "str"
         }
       ],
       "error": null,
       "bo_type": "standard"
     },
     "Datascout_Genlookup_GENDER": {
-      "total_records": 4,
+      "total_records": 6,
       "properties": [
         {
           "name": "CODE",
-          "sample_value": "A",
+          "sample_value": "F",
           "type": "str"
         },
         {
           "name": "DESCRIPTION",
-          "sample_value": "Prefer not to answer",
+          "sample_value": "Female",
           "type": "str"
         }
       ],
@@ -223,7 +167,7 @@
       "properties": [],
       "error": "HTTP 500",
       "bo_type": "standard",
-      "note": "HTTP 500 on direct API call \u2014 no parameter accepted. Internal server-side issue, not a deployment problem."
+      "note": "HTTP 500 on direct API call — no parameter accepted. Internal server-side issue, not a deployment problem."
     },
     "datascout_Max_Change_Log": {
       "total_records": 0,
@@ -232,7 +176,7 @@
       "bo_type": "standard"
     },
     "Datascout_Revenue": {
-      "total_records": 4964,
+      "total_records": 4975,
       "properties": [
         {
           "name": "lifetime_value",
@@ -273,12 +217,12 @@
       "properties": [
         {
           "name": "Average_Yearly_Revenue",
-          "sample_value": "88.67744",
+          "sample_value": "78.004761",
           "type": "float"
         },
         {
           "name": "Average_Lifetime_Value",
-          "sample_value": "1146.58002",
+          "sample_value": "1093.735474",
           "type": "float"
         }
       ],
@@ -286,7 +230,7 @@
       "bo_type": "standard"
     },
     "Datascout_Roster": {
-      "total_records": 281,
+      "total_records": 259,
       "properties": [
         {
           "name": "id",
@@ -302,39 +246,22 @@
       "error": null,
       "bo_type": "standard"
     },
-    "Datascout_Tag_Changes": {
-      "total_records": 18827,
-      "properties": [
-        {
-          "name": "Created_On",
-          "sample_value": "2025-04-14T14:59:35.36",
-          "type": "str"
-        },
-        {
-          "name": "id",
-          "sample_value": "103",
-          "type": "str"
-        },
-        {
-          "name": "OriginalValue",
-          "sample_value": "systemuser",
-          "type": "str"
-        },
-        {
-          "name": "Ordinal",
-          "sample_value": "44",
-          "type": "int"
-        }
-      ],
-      "error": null,
-      "bo_type": "standard"
-    },
     "Datascout_Tag_Refresh_Date_Fields": {
-      "total_records": 5479,
+      "total_records": 5432,
       "properties": [
         {
           "name": "ID",
-          "sample_value": "101",
+          "sample_value": "1",
+          "type": "str"
+        },
+        {
+          "name": "birth_date",
+          "sample_value": "0001-01-01T00:00:00",
+          "type": "str"
+        },
+        {
+          "name": "Join_Date",
+          "sample_value": "0001-01-01T00:00:00",
           "type": "str"
         },
         {
@@ -348,61 +275,18 @@
           "type": "str"
         },
         {
+          "name": "Paid_Through",
+          "sample_value": "0001-01-01T00:00:00",
+          "type": "str"
+        },
+        {
           "name": "Paid_Through_Date",
-          "sample_value": "2011-10-31",
+          "sample_value": "",
           "type": "str"
         }
       ],
       "error": null,
       "bo_type": "standard"
-    },
-    "Datascout_Tags": {
-      "total_records": 50011,
-      "properties": [
-        {
-          "name": "ID",
-          "sample_value": "101",
-          "type": "str"
-        },
-        {
-          "name": "Ordinal",
-          "sample_value": "83",
-          "type": "int"
-        },
-        {
-          "name": "CreatedByUserKey",
-          "sample_value": "d3ac5b59-4f8a-4571-9b2f-59aa6e64adcd",
-          "type": "str"
-        },
-        {
-          "name": "CreatedOn",
-          "sample_value": "2025-04-14T14:59:29.873",
-          "type": "str"
-        },
-        {
-          "name": "TagType",
-          "sample_value": "System",
-          "type": "str"
-        },
-        {
-          "name": "TagValue",
-          "sample_value": "active-member",
-          "type": "str"
-        },
-        {
-          "name": "UpdatedByUserKey",
-          "sample_value": "d3ac5b59-4f8a-4571-9b2f-59aa6e64adcd",
-          "type": "str"
-        },
-        {
-          "name": "UpdatedOn",
-          "sample_value": "2025-04-14T14:59:29.873",
-          "type": "str"
-        }
-      ],
-      "error": null,
-      "bo_type": "source_panel",
-      "note": "Source panel \u2014 requires member ID context. 403 without parameter is expected."
     }
   }
 }

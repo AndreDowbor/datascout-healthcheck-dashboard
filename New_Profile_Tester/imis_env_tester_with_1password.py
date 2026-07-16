@@ -24,6 +24,7 @@ ENVIRONMENTS = [
         "i8vdemo13", "isgdemo106", "demo83", "imis87", "atdemo81", "armdemo96", "imis36", "demo86", "atsdemo89",
         "imisdemo11", "ensyncdemo13", "ibcdemo80", "demo42", "atdemo2", "demosales3", "apimisdemo25", "demosales50",
         "aaae", "bsidemo27", "isgdemo14", "oasw", "cpanb", "aboncle",
+        "demosales44", "demosales33", "atsdemo90",
    ]
 
 #ENVIRONMENTS = ["imis36"]  # Solo Testing
@@ -55,6 +56,9 @@ PROFILE_URLS = {
     "cpanb": "https://staff.cpanewbrunswick.ca/CPASTAFF/ContactLayouts/Account_Page_Staff.aspx?ID=36745&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
     "bsidemo27": "https://demoaisp27.imiscloud.com/Union-Demo/Workers/Account_Page_Staff.aspx?ID=126&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
     "aaae": "https://member.aaae.org/AAAECore/Contacts/EMS/ContactLayouts/Account_Page_Staff.aspx?ID=303528&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+    "demosales44": "https://demosales44.imiscloud.com/_Demo/Account-Pages/ContactLayouts/Account_Page_Staff.aspx?ID=126&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+    "demosales33": "https://demosales33.imiscloud.com/Shared_Content/Contacts/OrganizationLayouts/Account_Staff.aspx?ID=126&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+    "atsdemo90": "https://demoaisp90.imiscloud.com/_Demo/Account-Pages/ContactLayouts/CAR_Full_Account_Staff.aspx?ID=126&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
 }
 
 # Environments where the profile URL is on a different domain than the 1Password base URL.
@@ -67,6 +71,15 @@ LOGIN_URL_OVERRIDES = {}
 USERNAME_SELECTOR = "[id$='signInUserName']"
 PASSWORD_SELECTOR = "[id$='signInPassword']"
 LOGIN_BUTTON_SELECTOR = "[id$='SubmitButton']"
+
+# Newer iMIS "email first" sign-in widget (currently seen on i8vdemo13).
+# Step 1: fill email, click Continue. Step 2: expand "Sign in using iMIS password",
+# fill password, click Sign In.
+NEW_LOGIN_USERNAME_SELECTOR = "[id$='OpenIdUserName']"
+NEW_LOGIN_CONTINUE_SELECTOR = "[id$='OpenIdSubmitButton']"
+NEW_LOGIN_PASSWORD_TOGGLE_SELECTOR = "text=Sign in using iMIS password"
+NEW_LOGIN_PASSWORD_SELECTOR = "[id$='OpenIdPassword']"
+NEW_LOGIN_SIGNIN_SELECTOR = "[id$='ReservedUserSubmitButton']"
 
 PAGE_READY_SELECTOR = "body"
 DATASCOUT_BUTTON = "#openBtn"
@@ -142,10 +155,19 @@ async def login_and_open_datascout_profile(playwright, env_name, base_url, usern
 
     # If login form isn't present, the site redirected to its homepage — click Sign In
     login_form_visible = False
+    use_new_login = False
     try:
         await page.wait_for_selector(USERNAME_SELECTOR, timeout=5000)
         login_form_visible = True
     except Exception:
+        try:
+            await page.wait_for_selector(NEW_LOGIN_USERNAME_SELECTOR, timeout=3000)
+            login_form_visible = True
+            use_new_login = True
+        except Exception:
+            pass
+
+    if not login_form_visible:
         print(f"{env_name}: Login form not on root page (URL: {page.url}), looking for Sign In link...")
         sign_in_selectors = [
             "a:has-text('Sign in')",
@@ -174,19 +196,34 @@ async def login_and_open_datascout_profile(playwright, env_name, base_url, usern
         print(f"Current URL: {page.url}")
         raise RuntimeError(f"Could not reach login form for {env_name}")
 
-    try:
-        await page.wait_for_selector(USERNAME_SELECTOR, timeout=20000)
-    except Exception:
-        debug_path = SCREENSHOT_DIR / f"{env_name.lower()}_login_debug_{timestamp()}.png"
-        await page.screenshot(path=str(debug_path), full_page=True)
-        print(f"Login form still not found after Sign In click. Debug screenshot saved: {debug_path}")
-        print(f"Current URL: {page.url}")
-        raise
+    if use_new_login:
+        try:
+            await page.fill(NEW_LOGIN_USERNAME_SELECTOR, username)
+            await page.click(NEW_LOGIN_CONTINUE_SELECTOR)
+            await page.click(NEW_LOGIN_PASSWORD_TOGGLE_SELECTOR, timeout=8000)
+            await page.wait_for_selector(NEW_LOGIN_PASSWORD_SELECTOR, state="visible", timeout=8000)
+            await page.fill(NEW_LOGIN_PASSWORD_SELECTOR, password)
+            await page.click(NEW_LOGIN_SIGNIN_SELECTOR)
+        except Exception:
+            debug_path = SCREENSHOT_DIR / f"{env_name.lower()}_login_debug_{timestamp()}.png"
+            await page.screenshot(path=str(debug_path), full_page=True)
+            print(f"New-style login flow failed. Debug screenshot saved: {debug_path}")
+            print(f"Current URL: {page.url}")
+            raise
+    else:
+        try:
+            await page.wait_for_selector(USERNAME_SELECTOR, timeout=20000)
+        except Exception:
+            debug_path = SCREENSHOT_DIR / f"{env_name.lower()}_login_debug_{timestamp()}.png"
+            await page.screenshot(path=str(debug_path), full_page=True)
+            print(f"Login form still not found after Sign In click. Debug screenshot saved: {debug_path}")
+            print(f"Current URL: {page.url}")
+            raise
 
-    await page.fill(USERNAME_SELECTOR, username)
-    await page.fill(PASSWORD_SELECTOR, password)
+        await page.fill(USERNAME_SELECTOR, username)
+        await page.fill(PASSWORD_SELECTOR, password)
+        await page.click(LOGIN_BUTTON_SELECTOR)
 
-    await page.click(LOGIN_BUTTON_SELECTOR)
     await wait_post_login(page)
     print(f"{env_name}: Logged in successfully.")
 
