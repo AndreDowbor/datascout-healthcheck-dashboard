@@ -43,7 +43,7 @@ PROFILE_URLS = {
     "apimisdemo25": "https://apdemosales25.imiscloud.com/_Demo/Account-Pages/ContactLayouts/Account_Page_Staff.aspx?ID=126&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
     "ibcdemo80": "https://demoaisp80.imiscloud.com/_Demo/Account-Pages/ContactLayouts/Account_Page_Staff.aspx?ID=126&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
     "atdemo2": "https://demoaisp2.imiscloud.com/Shared_Content/Datascout/Account_Staff.aspx?ID=23242&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
-    "demo42": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/DataScout_Account_Page_Staff.aspx?ID=23324&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+    "demo42": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/Account_Page_Staff.aspx?ID=21364&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
     "demosales3": "https://demosales3.imiscloud.com/_Demo/Account-Pages/ContactLayouts/Account_Page_Staff.aspx?ID=126&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
     "isgdemo106": "https://demoaisp106.imiscloud.com/MyStaff/ContactManagement/Individuals/Account_Page_Staff.aspx?ID=126&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
     "demosales50": "https://demosales50.imiscloud.com/_Demo/Account-Pages/ContactLayouts/Account_Page_Staff.aspx?ID=23337&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
