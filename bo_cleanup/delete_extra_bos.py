@@ -49,13 +49,16 @@ TARGET_BOS = [
 ]
 
 # demo42 is golden and excluded — it doesn't have these BOs.
+# Remaining pending envs (see progress tracker spreadsheet for full status):
+# - demo83, demosales50: not yet attempted (excluded from the last run on request).
+# - demosales3: sidebar layout differs — RiSE collapsed behind an expanded
+#   Registration section, BOA link resolves but stays hidden. Needs bespoke
+#   handling (collapse Registration first) or manual cleanup.
+# - bsidemo27, isgdemo14, isgdemo106: login succeeds but lands back on the
+#   public front-end site with just a staff toolbar, not the internal RiSE
+#   console — needs an extra navigation step this script doesn't have yet.
 ENV_NAMES = [
-    "demo83",
-    "atsdemo89", "armdemo96", "imisdemo11", "imis36",
-    "apimisdemo25", "imis87", "imis104", "demosales3", "demosales50", "demosales39", "demosales28",
-    "atdemo2", "atdemo81", "demo14", "bsidemo27", "demo86",
-    "ensyncdemo13", "i8vdemo13", "ibcdemo80", "isgdemo14", "isgdemo106",
-    "atsdemo90", "demosales33", "demosales44",
+    "demo83", "demosales50", "demosales3", "bsidemo27", "isgdemo14", "isgdemo106",
 ]
 
 RISE_LINK_SELECTOR = "a.RiSELink"
@@ -87,12 +90,55 @@ async def login(page, base_url: str, username: str, password: str):
     login_url = f"{normalize_base_url(base_url)}/"
     await page.goto(login_url, wait_until="load", timeout=60000)
 
+    try:
+        await page.click("text=Accept All", timeout=3000)
+    except Exception:
+        pass
+
     use_new_login = False
+    login_form_visible = False
     try:
         await page.wait_for_selector(USERNAME_SELECTOR, timeout=5000)
+        login_form_visible = True
     except Exception:
-        await page.wait_for_selector(NEW_LOGIN_USERNAME_SELECTOR, timeout=8000)
-        use_new_login = True
+        try:
+            await page.wait_for_selector(NEW_LOGIN_USERNAME_SELECTOR, timeout=3000)
+            login_form_visible = True
+            use_new_login = True
+        except Exception:
+            pass
+
+    if not login_form_visible:
+        # Some environments land on the public marketing homepage instead of
+        # the login form — click through a "Sign in" link first (same pattern
+        # as New_Profile_Tester/imis_env_tester_with_1password.py).
+        sign_in_selectors = [
+            "a:has-text('Sign in')",
+            "a:has-text('Sign In')",
+            "a:has-text('Log in')",
+            "a:has-text('Log In')",
+            "a[href*='Login']",
+            "a[href*='login']",
+            "a[href*='SignIn']",
+        ]
+        for sel in sign_in_selectors:
+            try:
+                elem = page.locator(sel).first
+                if await elem.is_visible(timeout=2000):
+                    await elem.click()
+                    login_form_visible = True
+                    break
+            except Exception:
+                continue
+
+        if not login_form_visible:
+            raise RuntimeError("Could not find login form or a Sign In link")
+
+        try:
+            await page.wait_for_selector(USERNAME_SELECTOR, timeout=8000)
+        except Exception:
+            await page.wait_for_selector(NEW_LOGIN_USERNAME_SELECTOR, timeout=8000)
+            use_new_login = True
 
     if use_new_login:
         await page.fill(NEW_LOGIN_USERNAME_SELECTOR, username)
@@ -208,8 +254,17 @@ async def process_env(playwright, env_name: str, creds: dict) -> dict:
         except Exception:
             pass
 
-        await page.locator(RISE_LINK_SELECTOR).first.click()
-        await page.locator(BOA_LINK_SELECTOR).first.click()
+        boa_link = page.locator(BOA_LINK_SELECTOR).first
+        for attempt in range(3):
+            await page.locator(RISE_LINK_SELECTOR).first.click()
+            try:
+                await boa_link.wait_for(state="visible", timeout=5000)
+                break
+            except Exception:
+                if attempt == 2:
+                    raise
+                await page.wait_for_timeout(500)
+        await boa_link.click()
         await page.wait_for_selector(QUICK_FIND_SELECTOR, timeout=20000)
 
         for bo_name in TARGET_BOS:
