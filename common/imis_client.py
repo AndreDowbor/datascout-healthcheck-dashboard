@@ -17,7 +17,7 @@ class IMISClient:
         if not imis_password:
             raise ValueError("imis_password is missing, check your secrets manager")
 
-        self.base_url = imis_base_url
+        self.base_url = imis_base_url.rstrip("/")
         self.user = imis_user
         self.password = imis_password
 
@@ -440,7 +440,7 @@ class IMISClient:
     #     Returns:
     #         dict: Parsed JSON response from the API.
     #     """
-    #     url = f"{self.base_url}api/DocumentSummary/_execute"
+    #     url = f"{self.base_url}/api/DocumentSummary/_execute"
     #     headers = {"Content-Type": "application/json"}
         
     #     body = {
@@ -513,7 +513,7 @@ class IMISClient:
     #     Returns:
     #         dict: Parsed JSON response from the API.
     #     """
-    #     url = f"{self.base_url}api/QueryDefinition/_execute"
+    #     url = f"{self.base_url}/api/QueryDefinition/_execute"
         
     #     headers = {
     #         "Content-Type": "application/json"
@@ -552,7 +552,7 @@ class IMISClient:
     #     """
 
     #     def get_document_id(path):
-    #         url = f"{self.base_url}api/Document/_execute"
+    #         url = f"{self.base_url}/api/Document/_execute"
     #         headers = {"Content-Type": "application/json"}
             
     #         body = {
@@ -646,7 +646,7 @@ class IMISClient:
         Look up a folder/document ID by its path.
         Returns None if not found or if API response is invalid.
         """
-        url = f"{self.base_url}api/Document/_execute"
+        url = f"{self.base_url}/api/Document/_execute"
         headers = {"Content-Type": "application/json"}
         body = {
             "$type": "Asi.Soa.Core.DataContracts.GenericExecuteRequest, Asi.Contracts",
@@ -679,7 +679,7 @@ class IMISClient:
         """
         Retrieve all descendant document summaries (IQAs) in the folder with the given document ID.
         """
-        url = f"{self.base_url}api/DocumentSummary/_execute"
+        url = f"{self.base_url}/api/DocumentSummary/_execute"
         headers = {"Content-Type": "application/json"}
         body = {
             "$type": "Asi.Soa.Core.DataContracts.GenericExecuteRequest, Asi.Contracts",
