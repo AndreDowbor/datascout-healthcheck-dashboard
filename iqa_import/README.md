@@ -82,3 +82,31 @@ Only worry if a query (not a folder) shows an error.
   confirmed manually there; other environments may have slightly different
   layouts (custom menus, different folder names) worth spot-checking before
   a wider rollout.
+
+## import_iqa_package_batch.py — batch version across many environments
+
+`import_iqa_package_batch.py` extends the pattern above to import one or
+more packages into a **nested** folder (e.g. `$/_DataScout/Segments`, not
+just a direct child of `$`) across a list of environments in one run.
+Exported packages live in `iqa_import/packages/`.
+
+Used on 2026-07-21 to bring `custom_tag_rules` and `tag_extension` (two
+subfolders of `Segments` present in `demo42` but missing from most other
+environments) into 24/25 and 3/25 environments respectively.
+
+**Safety**: before touching any environment, it does a live REST API
+pre-flight check (`folder_already_exists`) confirming the target folder
+doesn't already exist there, and aborts (skips that environment entirely)
+if it does — this matters most for folders like `tag_extension` where
+several environments have their own real custom content that must never be
+overwritten.
+
+**Known quirk**: clicking the final **Import** button triggers a real form
+postback that reloads the iframe's document. Playwright's `click()` can
+hang indefinitely waiting on that call across the navigation (the frame's
+execution context goes away mid-click) — confirmed empirically that the
+import itself always still succeeds server-side even when the click()
+promise never resolves. The script uses a short timeout on that specific
+click and swallows the exception, then verifies success afterwards via the
+REST API directly instead of polling the Messages textarea in what may be
+a stale frame reference.
