@@ -1,0 +1,1058 @@
+{
+  "console": [
+    {
+      "type": "log",
+      "text": "JQMIGRATE: Migrate is installed, version 3.3.2",
+      "location": {
+        "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Jquery/jquery-migrate.min.js",
+        "line": 2,
+        "column": 708,
+        "lineNumber": 2,
+        "columnNumber": 708
+      }
+    },
+    {
+      "type": "log",
+      "text": "[Parent] Found ID in query: 21364",
+      "location": {
+        "url": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/Account_Page_Staff.aspx?ID=21364&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+        "line": 894,
+        "column": 10,
+        "lineNumber": 894,
+        "columnNumber": 10
+      }
+    },
+    {
+      "type": "log",
+      "text": "[Parent] Hidden SSO iframe loaded. Session cookie should be set.",
+      "location": {
+        "url": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/Account_Page_Staff.aspx?ID=21364&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+        "line": 901,
+        "column": 12,
+        "lineNumber": 901,
+        "columnNumber": 12
+      }
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 500 ()",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/demo42/profile/21364",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 500 ()",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/demo42/profile/21364",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "log",
+      "text": "[Parent] Hidden SSO iframe loaded. Session cookie should be set.",
+      "location": {
+        "url": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/Account_Page_Staff.aspx?ID=21364&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+        "line": 901,
+        "column": 12,
+        "lineNumber": 901,
+        "columnNumber": 12
+      }
+    },
+    {
+      "type": "log",
+      "text": "\ud83e\udd8a Datascout Profiles Version: v1.150",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js",
+        "line": 0,
+        "column": 365,
+        "lineNumber": 0,
+        "columnNumber": 365
+      }
+    },
+    {
+      "type": "log",
+      "text": "\ud83c\udf10 Gateway API URL: https://gateway.staging.app.datascout.ai/api/v1",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js",
+        "line": 0,
+        "column": 365,
+        "lineNumber": 0,
+        "columnNumber": 365
+      }
+    },
+    {
+      "type": "error",
+      "text": "[EnvironmentIndicator] Gateway /environment call error: Failed to fetch",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js",
+        "line": 0,
+        "column": 444,
+        "lineNumber": 0,
+        "columnNumber": 444
+      }
+    },
+    {
+      "type": "log",
+      "text": "\ud83e\udd8a Datascout Profiles Version: v1.150",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js",
+        "line": 0,
+        "column": 365,
+        "lineNumber": 0,
+        "columnNumber": 365
+      }
+    },
+    {
+      "type": "log",
+      "text": "\ud83c\udf10 Gateway API URL: https://gateway.staging.app.datascout.ai/api/v1",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js",
+        "line": 0,
+        "column": 365,
+        "lineNumber": 0,
+        "columnNumber": 365
+      }
+    },
+    {
+      "type": "error",
+      "text": "Error fetching AI Brief: TypeError: Failed to fetch\n    at window.fetch (https://profiles.staging.app.datascout.ai/_app/immutable/chunks/C3YtcAB3.js:1:1661)\n    at https://profiles.staging.app.datascout.ai/_app/immutable/nodes/6.Cfg9fayM.js:79:5239\n    at h (https://profiles.staging.app.datascout.ai/_app/immutable/nodes/6.Cfg9fayM.js:79:5694)\n    at https://profiles.staging.app.datascout.ai/_app/immutable/nodes/6.Cfg9fayM.js:79:5838\n    at z (https://profiles.staging.app.datascout.ai/_app/immutable/chunks/Df_YUKVt.js:1:266)\n    at Array.map (<anonymous>)\n    at https://profiles.staging.app.datascout.ai/_app/immutable/chunks/BfpFw9_a.js:4:2107\n    at ct (https://profiles.staging.app.datascout.ai/_app/immutable/chunks/Df_YUKVt.js:1:8076)\n    at Et (https://profiles.staging.app.datascout.ai/_app/immutable/chunks/BfpFw9_a.js:4:3196)\n    at new le (https://profiles.staging.app.datascout.ai/_app/immutable/entry/app.CLyA_GCq.js:2:4572)",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/_app/immutable/nodes/6.Cfg9fayM.js",
+        "line": 78,
+        "column": 5733,
+        "lineNumber": 78,
+        "columnNumber": 5733
+      }
+    },
+    {
+      "type": "log",
+      "text": "JQMIGRATE: Migrate is installed, version 3.3.2",
+      "location": {
+        "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Jquery/jquery-migrate.min.js",
+        "line": 2,
+        "column": 708,
+        "lineNumber": 2,
+        "columnNumber": 708
+      }
+    },
+    {
+      "type": "log",
+      "text": "[Parent] Found ID in query: 21364",
+      "location": {
+        "url": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/Account_Page_Staff.aspx?ID=21364&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+        "line": 894,
+        "column": 10,
+        "lineNumber": 894,
+        "columnNumber": 10
+      }
+    },
+    {
+      "type": "log",
+      "text": "[Parent] Hidden SSO iframe loaded. Session cookie should be set.",
+      "location": {
+        "url": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/Account_Page_Staff.aspx?ID=21364&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+        "line": 901,
+        "column": 12,
+        "lineNumber": 901,
+        "columnNumber": 12
+      }
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 500 ()",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/demo42/profile/21364",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "log",
+      "text": "\ud83e\udd8a Datascout Profiles Version: v1.150",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js",
+        "line": 0,
+        "column": 365,
+        "lineNumber": 0,
+        "columnNumber": 365
+      }
+    },
+    {
+      "type": "log",
+      "text": "\ud83c\udf10 Gateway API URL: https://gateway.staging.app.datascout.ai/api/v1",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js",
+        "line": 0,
+        "column": 365,
+        "lineNumber": 0,
+        "columnNumber": 365
+      }
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 500 ()",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/demo42/profile/21364",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "log",
+      "text": "[Parent] Hidden SSO iframe loaded. Session cookie should be set.",
+      "location": {
+        "url": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/Account_Page_Staff.aspx?ID=21364&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+        "line": 901,
+        "column": 12,
+        "lineNumber": 901,
+        "columnNumber": 12
+      }
+    },
+    {
+      "type": "error",
+      "text": "[EnvironmentIndicator] Gateway /environment call error: Failed to fetch",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js",
+        "line": 0,
+        "column": 444,
+        "lineNumber": 0,
+        "columnNumber": 444
+      }
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 500 ()",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/demo42/profile/21364",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      }
+    },
+    {
+      "type": "log",
+      "text": "\ud83e\udd8a Datascout Profiles Version: v1.150",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js",
+        "line": 0,
+        "column": 365,
+        "lineNumber": 0,
+        "columnNumber": 365
+      }
+    },
+    {
+      "type": "log",
+      "text": "\ud83c\udf10 Gateway API URL: https://gateway.staging.app.datascout.ai/api/v1",
+      "location": {
+        "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js",
+        "line": 0,
+        "column": 365,
+        "lineNumber": 0,
+        "columnNumber": 365
+      }
+    }
+  ],
+  "pageerrors": [],
+  "network": [
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/Account_Page_Staff.aspx?ID=21364&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/assets/images/default/person.png"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Telerik.Web.UI.WebResource.axd?d=PMrIT5dOWaVYIcpFWUE4nK5HrGtN3vO4AQLwuW8gph0c2YkGDDo8Hl83I1RY3hxOv7VaH5Yce0ngP2rWWRI_x4PVGQMQsZs5c_8KduhJIipHTmHCqIso9HImYYYZtZwv0&t=639081039646673900&compress=1&_TSM_CombinedScripts_=%3b%3bTelerik.Web.UI%2c+Version%3d2025.1.416.462%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3aen-US%3aced1f735-5c2a-4218-bd68-1813924fe936%3a1f65231b%3a45085116%3ad7e35272%3a505983de%3aba1b8630%3aca0174c4%3acb8bc7bb%3a8cee9284%3aa3b7d93f%3a9e1572d6%3a66bbbe4a%3a9fa65570%3a92753c09%3bTelerik.Web.UI.Skins%2c+Version%3d2025.1.416.462%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3aen-US%3aed16527b-31a8-4623-a686-9663f4c1871e%3a57039dd0%3a5438c61f%3a929e740d%3a4bcbafc1"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZKMcIqqskAd9i-JVFbLWf94yCY--2j1C21aghG7sXARFda4jujs8Jl5Ut0S7BnW1WA2&t=638901526312636832"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/ScriptResource.axd?d=xtDSkLnUefsDkXzy1V9OGeDndDfs6Y8Iw1XaH7OFRWTtSlTxNB51xwh8_SCfxzZ2ZvEa7cUVuOBHwPJ0UxoFT5GO_c9Dx7u4dlZmXzEgrawXnVxqsLsbLjW5mtEOON83j4gHLXn2aHUtxu3pKIBgow2&t=35e30de3"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Jquery/jquery-migrate.min.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iparts/Contact%20Management/ContactMiniProfile/ContactNameDisplay.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Unbundled/ApplicationInsights.js?v=-866593060"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Unbundled/ApplicationInsightsCookieCleanup.min.js?v=1081336175"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iparts/Common/QueryChartViewer/QueryChartViewer.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iparts/Common/ContentCollectionOrganizer/ContentCollectionOrganizer.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iParts/Communications/EngagementScoreDisplay/Donut.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/App_Themes/Orion/99-Orion.css?v=639181181960000000"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/assets/images/default/person_thumb.png"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Assets/css/10-UltraWaveResponsive.css?v=639181181980000000"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iParts/Contact%20Management/ContactAddressEditor/ContactAddressEditor.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iParts/Contact%20Management/ContactAddressEditor/ContactAddressCopy.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iparts/Common/PanelEditor/PanelEditor.js?v=-615093365"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iparts/Communications/Notification/Notification.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Jquery/Jquery.min.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iParts/Commerce/BatchSelector/BatchSelectorDisplay.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Asi.js?v=-1740356471"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&display=swap"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&display=swap"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.gstatic.com/s/opensans/v44/memvYaGs126MiZpBA-UvWbX2vVnXBbObj2OVTS-mu0SC55I.woff2"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Telerik.Web.UI.WebResource.axd?_TSM_HiddenField_=ctl01_ScriptManager1_TSM&compress=1&_TSM_CombinedScripts_=%3b%3bAjaxControlToolkit%3aen-US%3a0c8c847b-b611-49a7-8e75-2196aa6e72fa%3aea597d4b%3ab25378d2%3bTelerik.Web.UI%2c+Version%3d2025.1.416.462%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3aen-US%3aced1f735-5c2a-4218-bd68-1813924fe936%3a16e4e7cd%3aed16cbdc%3af7645509%3a24ee1bba%3a2003d0b8%3af46195d3%3a33715776%3a1e771326%3a88144a7a%3ae524c98b%3a6d43f6d9%3a52af31a4%3a5fa37e7e%3ae330518b%3a8e6f0d33%3a1f3a7489%3a6a6d718d%3a58366029%3a4cd1fec6%3a77613e24%3a71188da4%3af0c58c30%3a9b7cc2d2%3ad944e0f6%3aec7335e%3ac442ac3f%3a69667591%3a8d1fecce%3a6b6b9ee5%3a595e7652%3ac128760b%3a19620875%3a874f8ea2%3ab2e06756%3a92fe8ea0%3afa31b949%3a4877f69a%3a490a9d4e%3abd8f85e4"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.gstatic.com/s/redhatdisplay/v21/8vIQ7wUr0m80wwYf0QCXZzYzUoTg_T6hR4jNCA.woff2"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/App_Themes/Orion/images/bg-geometric-blue.png"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.gstatic.com/s/inter/v20/UcCo3FwrK3iLTcviYwYZ8UA3.woff2"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/App_Themes/Orion/Images/Pixel.png"
+    },
+    {
+      "status": 200,
+      "url": "https://js.monitor.azure.com/scripts/b/ai.2.min.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Assets/images/Icons/SVG/bento-menu.svg"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/App_Themes/Orion/images/iMIS-logo.svg"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/App_Themes/Orion/images/NavbarSprite.svg"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Assets/images/IconSprite.svg"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/WebResource.axd?d=MYQB4HPOxBeA-YKXUmP7Ri6UojSh0n44viKlqyLaxn5l61bGdz8yushJTGwFRY2uuIHCTx5tD0mlFddECr5sLSoCgyByLQn8xveGBZ3dQMGqdjhpPCnyU1GY7rX4NlacAp7DpF7RV69x7vUozWtM5hpr9TjH-oyn0Bfa7OOHAzRwJBdkPXWlqmMLNZCaWwFL0&t=638804064520000000"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/DatascoutSSOStaging.aspx"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/navigationmaps/8d22e78d-5e61-48a4-9264-d3522a7d8f7f.map?version=F004B471&culture=en-US"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/images/datascout/datascout%20imis%20logo.png"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/SessionInfo/GetSessionInfoFromCookie"
+    },
+    {
+      "status": 500,
+      "url": "https://profiles.staging.app.datascout.ai/demo42/profile/21364"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/assets/0.BcMJM_Gi.css"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/assets/light.M5cKIoZD.css"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/BfpFw9_a.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/B3zJD90k.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/CJ9QmXH9.js"
+    },
+    {
+      "status": 200,
+      "url": "https://gateway.staging.app.datascout.ai/api/v1/imis-sso/callback/demo42"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/entry/start.esJBy41x.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/C3YtcAB3.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/jKjWACjA.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/Df_YUKVt.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/entry/app.CLyA_GCq.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/zpr6Mpxl.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/BtyuDa5g.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/nodes/0.Bez0TqvR.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/ap7lkbsT.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/nodes/1.Dz9EccAj.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/B03ERz9r.js"
+    },
+    {
+      "status": 200,
+      "url": "https://us-assets.i.posthog.com/array/phc_NT0aHfxHI2ivJkwSHAoKBgD1SEH5qLP55DLcA8rzhft/config.js"
+    },
+    {
+      "status": 200,
+      "url": "https://us-assets.i.posthog.com/static/exception-autocapture.js?v=1.236.1"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/api/notificationsetresults?AlertSets=7fcfd5c5-d6e5-46aa-8966-b671b93d6ae7&UserId=21364&UrlParameters=ID%3D21364%26WebsiteKey%3D4243d9e2-e91e-468c-97c2-2046d70c1e1a&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a&WebsiteBaseUrl=https%3A%2F%2Fdemoaisp42.imiscloud.com&Tilda=&Version=68A0B39F"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/api/notificationsetresults?AlertSets=845f59db-52b9-4448-8209-c77b8fc1fe60&UserId=21364&UrlParameters=ID%3D21364%26WebsiteKey%3D4243d9e2-e91e-468c-97c2-2046d70c1e1a&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a&WebsiteBaseUrl=https%3A%2F%2Fdemoaisp42.imiscloud.com&Tilda=&Version=388D6F44"
+    },
+    {
+      "status": 200,
+      "url": "https://us.i.posthog.com/decide/?v=4&ip=1&_=1784849233060&ver=1.236.1&compression=base64"
+    },
+    {
+      "status": 200,
+      "url": "https://us.i.posthog.com/decide/?v=4&ip=1&_=1784849233534&ver=1.236.1&compression=base64"
+    },
+    {
+      "status": 200,
+      "url": "https://eastus-8.in.applicationinsights.azure.com//v2/track"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/demo42/profile/21364"
+    },
+    {
+      "status": "FAILED",
+      "url": "https://profiles.staging.app.datascout.ai/api/environment-test",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/assets/0.BcMJM_Gi.css"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/assets/light.M5cKIoZD.css"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/entry/start.esJBy41x.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/C3YtcAB3.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/Df_YUKVt.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/entry/app.CLyA_GCq.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/jKjWACjA.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/B3zJD90k.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/BtyuDa5g.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/BfpFw9_a.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/nodes/0.Bez0TqvR.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/B03ERz9r.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/zpr6Mpxl.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/ap7lkbsT.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/CJ9QmXH9.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/assets/6.OGJ-qDzW.css"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/Cuk2oPa9.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/nodes/1.Dz9EccAj.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/nodes/6.Cfg9fayM.js"
+    },
+    {
+      "status": 200,
+      "url": "https://us-assets.i.posthog.com/static/exception-autocapture.js?v=1.236.1"
+    },
+    {
+      "status": 200,
+      "url": "https://us-assets.i.posthog.com/array/phc_NT0aHfxHI2ivJkwSHAoKBgD1SEH5qLP55DLcA8rzhft/config.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/api/session?clientId=demo42"
+    },
+    {
+      "status": 200,
+      "url": "https://us.i.posthog.com/decide/?v=4&ip=1&_=1784849234795&ver=1.236.1&compression=base64"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/api/profile/21364/tags"
+    },
+    {
+      "status": 200,
+      "url": "https://us.i.posthog.com/decide/?v=4&ip=1&_=1784849234954&ver=1.236.1&compression=base64"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com//assets/images/default/person.png"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com///assets/images/default/organization.png"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/api/tags/shared"
+    },
+    {
+      "status": 200,
+      "url": "https://eastus-8.in.applicationinsights.azure.com//v2/track"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/api/environment-test"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/Account_Page_Staff.aspx?ID=21364&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a"
+    },
+    {
+      "status": "FAILED",
+      "url": "https://profiles.staging.app.datascout.ai/api/ai-brief",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Unbundled/ApplicationInsightsCookieCleanup.min.js?v=1081336175"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Unbundled/ApplicationInsights.js?v=-866593060"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Assets/css/10-UltraWaveResponsive.css?v=639181181980000000"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/App_Themes/Orion/99-Orion.css?v=639181181960000000"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Jquery/Jquery.min.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Jquery/jquery-migrate.min.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Telerik.Web.UI.WebResource.axd?d=PMrIT5dOWaVYIcpFWUE4nK5HrGtN3vO4AQLwuW8gph0c2YkGDDo8Hl83I1RY3hxOv7VaH5Yce0ngP2rWWRI_x4PVGQMQsZs5c_8KduhJIipHTmHCqIso9HImYYYZtZwv0&t=639081039646673900&compress=1&_TSM_CombinedScripts_=%3b%3bTelerik.Web.UI%2c+Version%3d2025.1.416.462%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3aen-US%3aced1f735-5c2a-4218-bd68-1813924fe936%3a1f65231b%3a45085116%3ad7e35272%3a505983de%3aba1b8630%3aca0174c4%3acb8bc7bb%3a8cee9284%3aa3b7d93f%3a9e1572d6%3a66bbbe4a%3a9fa65570%3a92753c09%3bTelerik.Web.UI.Skins%2c+Version%3d2025.1.416.462%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3aen-US%3aed16527b-31a8-4623-a686-9663f4c1871e%3a57039dd0%3a5438c61f%3a929e740d%3a4bcbafc1"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/WebResource.axd?d=pynGkmcFUV13He1Qd6_TZKMcIqqskAd9i-JVFbLWf94yCY--2j1C21aghG7sXARFda4jujs8Jl5Ut0S7BnW1WA2&t=638901526312636832"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/ScriptResource.axd?d=xtDSkLnUefsDkXzy1V9OGeDndDfs6Y8Iw1XaH7OFRWTtSlTxNB51xwh8_SCfxzZ2ZvEa7cUVuOBHwPJ0UxoFT5GO_c9Dx7u4dlZmXzEgrawXnVxqsLsbLjW5mtEOON83j4gHLXn2aHUtxu3pKIBgow2&t=35e30de3"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iparts/Common/PanelEditor/PanelEditor.js?v=-615093365"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iParts/Contact%20Management/ContactAddressEditor/ContactAddressEditor.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iParts/Commerce/BatchSelector/BatchSelectorDisplay.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iParts/Contact%20Management/ContactAddressEditor/ContactAddressCopy.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Telerik.Web.UI.WebResource.axd?_TSM_HiddenField_=ctl01_ScriptManager1_TSM&compress=1&_TSM_CombinedScripts_=%3b%3bAjaxControlToolkit%3aen-US%3a0c8c847b-b611-49a7-8e75-2196aa6e72fa%3aea597d4b%3ab25378d2%3bTelerik.Web.UI%2c+Version%3d2025.1.416.462%2c+Culture%3dneutral%2c+PublicKeyToken%3d121fae78165ba3d4%3aen-US%3aced1f735-5c2a-4218-bd68-1813924fe936%3a16e4e7cd%3aed16cbdc%3af7645509%3a24ee1bba%3a2003d0b8%3af46195d3%3a33715776%3a1e771326%3a88144a7a%3ae524c98b%3a6d43f6d9%3a52af31a4%3a5fa37e7e%3ae330518b%3a8e6f0d33%3a1f3a7489%3a6a6d718d%3a58366029%3a4cd1fec6%3a77613e24%3a71188da4%3af0c58c30%3a9b7cc2d2%3ad944e0f6%3aec7335e%3ac442ac3f%3a69667591%3a8d1fecce%3a6b6b9ee5%3a595e7652%3ac128760b%3a19620875%3a874f8ea2%3ab2e06756%3a92fe8ea0%3afa31b949%3a4877f69a%3a490a9d4e%3abd8f85e4"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iparts/Common/QueryChartViewer/QueryChartViewer.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/AsiCommon/Scripts/Asi.js?v=-1740356471"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iparts/Communications/Notification/Notification.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iparts/Contact%20Management/ContactMiniProfile/ContactNameDisplay.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iparts/Common/ContentCollectionOrganizer/ContentCollectionOrganizer.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/iParts/Communications/EngagementScoreDisplay/Donut.js"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&display=swap"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&display=swap"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap"
+    },
+    {
+      "status": 200,
+      "url": "https://js.monitor.azure.com/scripts/b/ai.2.min.js"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.gstatic.com/s/opensans/v44/memvYaGs126MiZpBA-UvWbX2vVnXBbObj2OVTS-mu0SC55I.woff2"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.gstatic.com/s/inter/v20/UcCo3FwrK3iLTcviYwYZ8UA3.woff2"
+    },
+    {
+      "status": 200,
+      "url": "https://fonts.gstatic.com/s/redhatdisplay/v21/8vIQ7wUr0m80wwYf0QCXZzYzUoTg_T6hR4jNCA.woff2"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/assets/images/default/person_thumb.png"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/assets/images/default/person.png"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Assets/images/Icons/SVG/bento-menu.svg"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/App_Themes/Orion/images/iMIS-logo.svg"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Assets/images/IconSprite.svg"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/App_Themes/Orion/images/NavbarSprite.svg"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/App_Themes/Orion/Images/Pixel.png"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/App_Themes/Orion/images/bg-geometric-blue.png"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/WebResource.axd?d=MYQB4HPOxBeA-YKXUmP7Ri6UojSh0n44viKlqyLaxn5l61bGdz8yushJTGwFRY2uuIHCTx5tD0mlFddECr5sLSoCgyByLQn8xveGBZ3dQMGqdjhpPCnyU1GY7rX4NlacAp7DpF7RV69x7vUozWtM5hpr9TjH-oyn0Bfa7OOHAzRwJBdkPXWlqmMLNZCaWwFL0&t=638804064520000000"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/navigationmaps/8d22e78d-5e61-48a4-9264-d3522a7d8f7f.map?version=F004B471&culture=en-US"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/images/datascout/datascout%20imis%20logo.png"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/DatascoutSSOStaging.aspx"
+    },
+    {
+      "status": 500,
+      "url": "https://profiles.staging.app.datascout.ai/demo42/profile/21364"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/SessionInfo/GetSessionInfoFromCookie"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/assets/0.BcMJM_Gi.css"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/assets/light.M5cKIoZD.css"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/entry/start.esJBy41x.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/C3YtcAB3.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/Df_YUKVt.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/entry/app.CLyA_GCq.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/jKjWACjA.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/B3zJD90k.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/BtyuDa5g.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/BfpFw9_a.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/nodes/0.Bez0TqvR.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/B03ERz9r.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/zpr6Mpxl.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/ap7lkbsT.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/nodes/1.Dz9EccAj.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/CJ9QmXH9.js"
+    },
+    {
+      "status": 200,
+      "url": "https://us-assets.i.posthog.com/static/exception-autocapture.js?v=1.236.1"
+    },
+    {
+      "status": 200,
+      "url": "https://us-assets.i.posthog.com/array/phc_NT0aHfxHI2ivJkwSHAoKBgD1SEH5qLP55DLcA8rzhft/config.js"
+    },
+    {
+      "status": 200,
+      "url": "https://us.i.posthog.com/decide/?v=4&ip=1&_=1784849236892&ver=1.236.1&compression=base64"
+    },
+    {
+      "status": 200,
+      "url": "https://gateway.staging.app.datascout.ai/api/v1/imis-sso/callback/demo42"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/api/notificationsetresults?AlertSets=7fcfd5c5-d6e5-46aa-8966-b671b93d6ae7&UserId=21364&UrlParameters=ID%3D21364%26WebsiteKey%3D4243d9e2-e91e-468c-97c2-2046d70c1e1a&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a&WebsiteBaseUrl=https%3A%2F%2Fdemoaisp42.imiscloud.com&Tilda=&Version=68A0B39F"
+    },
+    {
+      "status": 200,
+      "url": "https://demoaisp42.imiscloud.com/api/notificationsetresults?AlertSets=845f59db-52b9-4448-8209-c77b8fc1fe60&UserId=21364&UrlParameters=ID%3D21364%26WebsiteKey%3D4243d9e2-e91e-468c-97c2-2046d70c1e1a&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a&WebsiteBaseUrl=https%3A%2F%2Fdemoaisp42.imiscloud.com&Tilda=&Version=388D6F44"
+    },
+    {
+      "status": 200,
+      "url": "https://us.i.posthog.com/decide/?v=4&ip=1&_=1784849237068&ver=1.236.1&compression=base64"
+    },
+    {
+      "status": 200,
+      "url": "https://eastus-8.in.applicationinsights.azure.com//v2/track"
+    },
+    {
+      "status": 500,
+      "url": "https://profiles.staging.app.datascout.ai/demo42/profile/21364"
+    },
+    {
+      "status": "FAILED",
+      "url": "https://profiles.staging.app.datascout.ai/api/environment-test",
+      "failure": "net::ERR_ABORTED"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/assets/0.BcMJM_Gi.css"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/assets/light.M5cKIoZD.css"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/entry/start.esJBy41x.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/C3YtcAB3.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/Df_YUKVt.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/entry/app.CLyA_GCq.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/jKjWACjA.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/B3zJD90k.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/BtyuDa5g.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/L-2q1xla.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/BfpFw9_a.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/nodes/0.Bez0TqvR.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/B03ERz9r.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/zpr6Mpxl.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/ap7lkbsT.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/nodes/1.Dz9EccAj.js"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/_app/immutable/chunks/CJ9QmXH9.js"
+    },
+    {
+      "status": 200,
+      "url": "https://us-assets.i.posthog.com/static/exception-autocapture.js?v=1.236.1"
+    },
+    {
+      "status": 200,
+      "url": "https://us-assets.i.posthog.com/array/phc_NT0aHfxHI2ivJkwSHAoKBgD1SEH5qLP55DLcA8rzhft/config.js"
+    },
+    {
+      "status": 200,
+      "url": "https://us.i.posthog.com/decide/?v=4&ip=1&_=1784849237542&ver=1.236.1&compression=base64"
+    },
+    {
+      "status": 200,
+      "url": "https://us.i.posthog.com/decide/?v=4&ip=1&_=1784849237703&ver=1.236.1&compression=base64"
+    },
+    {
+      "status": 200,
+      "url": "https://profiles.staging.app.datascout.ai/api/environment-test"
+    }
+  ]
+}
