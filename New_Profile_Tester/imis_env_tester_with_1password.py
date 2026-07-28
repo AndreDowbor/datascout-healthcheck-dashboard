@@ -138,14 +138,32 @@ async def wait_post_login(page):
 # CORE LOGIC
 # =============================
 
-async def login_and_open_datascout_profile(playwright, env_name, base_url, username, password, target_url):
+async def login_and_open_datascout_profile(playwright, env_name, base_url, username, password, target_url, save_state_path=None):
     """
-    Logs into IMIS, opens staff page, clicks Datascout Profile, refreshes, clicks again.
-    Screenshot removed here so we only get ONE screenshot per env (the retest screenshot after refresh).
+    Single-pass check: login, open the staff page, click the Datascout
+    Profile button, reload, click again, screenshot. One browser session for
+    the whole flow — this used to be followed by a second phase
+    (test_datascout_profile) that reopened a new browser with the saved
+    session and repeated the exact same click/reload/click sequence again,
+    which didn't test anything different and doubled exposure to the
+    session drops iMIS shows under load. Fails if the profile panel's
+    backend returns a 5xx during any of this, even if the button itself
+    worked — clicking a button that opens a broken panel isn't a pass.
     """
     browser = await playwright.chromium.launch(headless=HEADLESS)
     context = await browser.new_context()
     page = await context.new_page()
+
+    backend_errors = []
+
+    def _record_response(response):
+        if response.status >= 500:
+            backend_errors.append(f"{response.status} {response.url}")
+
+    page.on("response", _record_response)
+
+    result = {"env": env_name, "url": target_url}
+    start_time = time.time()
 
     base_url = normalize_base_url(base_url)
     login_url = f"{base_url}/"
@@ -263,11 +281,27 @@ async def login_and_open_datascout_profile(playwright, env_name, base_url, usern
     print("Waiting 10 seconds for Datascout panel to load fully...")
     await asyncio.sleep(10)
 
-    state_path = OUTPUT_DIR / f"{env_name.lower()}_auth.json"
-    await context.storage_state(path=state_path)
+    ts = timestamp()
+    screenshot_path = SCREENSHOT_DIR / f"{env_name.lower()}_profile_panel_{ts}.png"
+    await page.screenshot(path=str(screenshot_path))
+    print(f"Screenshot saved: {screenshot_path}")
+
+    if save_state_path:
+        await context.storage_state(path=save_state_path)
 
     await browser.close()
-    return state_path
+
+    elapsed = round(time.time() - start_time, 2)
+    if backend_errors:
+        print(f"{env_name}: backend errors during panel load: {backend_errors}")
+        result.update({
+            "status": "FAIL",
+            "error": "Backend error(s): " + "; ".join(backend_errors[:3]),
+            "time": f"{elapsed}s",
+        })
+    else:
+        result.update({"status": "PASS", "time": f"{elapsed}s"})
+    return result
 
 
 def _resolve_otp(otp_value: str) -> str:
@@ -279,7 +313,7 @@ def _resolve_otp(otp_value: str) -> str:
     return totp.now()
 
 
-async def login_via_redirect(playwright, env_name, username, password, target_url, otp=None):
+async def login_via_redirect(playwright, env_name, username, password, target_url, otp=None, save_state_path=None):
     """
     For cross-domain environments (e.g. oasw.org, staff.cpanewbrunswick.ca):
     navigate directly to the profile URL. The site redirects to its login page
@@ -288,6 +322,17 @@ async def login_via_redirect(playwright, env_name, username, password, target_ur
     browser = await playwright.chromium.launch(headless=HEADLESS)
     context = await browser.new_context()
     page = await context.new_page()
+
+    backend_errors = []
+
+    def _record_response(response):
+        if response.status >= 500:
+            backend_errors.append(f"{response.status} {response.url}")
+
+    page.on("response", _record_response)
+
+    result = {"env": env_name, "url": target_url}
+    start_time = time.time()
 
     print(f"\n[cross-domain] Navigating directly to profile URL for {env_name}: {target_url}")
     await safe_goto(page, target_url, label=f"{env_name} profile direct", wait_until="load")
@@ -383,49 +428,26 @@ async def login_via_redirect(playwright, env_name, username, password, target_ur
     print("Waiting 10 seconds for Datascout panel to load fully...")
     await asyncio.sleep(10)
 
-    state_path = OUTPUT_DIR / f"{env_name.lower()}_auth.json"
-    await context.storage_state(path=state_path)
+    ts = timestamp()
+    screenshot_path = SCREENSHOT_DIR / f"{env_name.lower()}_profile_panel_{ts}.png"
+    await page.screenshot(path=str(screenshot_path))
+    print(f"Screenshot saved: {screenshot_path}")
+
+    if save_state_path:
+        await context.storage_state(path=save_state_path)
+
     await browser.close()
-    return state_path
 
-
-async def test_datascout_profile(playwright, env_name, target_url, auth_state_path):
-    """
-    Re-tests the Datascout click sequence using saved session.
-    This is the ONLY place we take a screenshot now (after refresh/reload).
-    """
-    browser = await playwright.chromium.launch(headless=HEADLESS)
-    context = await browser.new_context(storage_state=str(auth_state_path))
-    page = await context.new_page()
-
-    result = {"env": env_name, "url": target_url}
-    start_time = time.time()
-
-    try:
-        await safe_goto(page, target_url, label=f"{env_name} retest staff page")
-
-        await page.wait_for_selector(DATASCOUT_BUTTON, timeout=20000)
-        await page.click(DATASCOUT_BUTTON)
-
-        await page.reload(wait_until="domcontentloaded", timeout=60000)
-
-        await page.wait_for_selector(DATASCOUT_BUTTON, timeout=20000)
-        await page.click(DATASCOUT_BUTTON)
-
-        await asyncio.sleep(10)
-
-        ts = timestamp()
-        screenshot_path = SCREENSHOT_DIR / f"{env_name.lower()}_profile_panel_retest_{ts}.png"
-        await page.screenshot(path=str(screenshot_path))
-        print(f"Viewport screenshot (retest) saved: {screenshot_path}")
-
-        elapsed = round(time.time() - start_time, 2)
+    elapsed = round(time.time() - start_time, 2)
+    if backend_errors:
+        print(f"{env_name}: backend errors during panel load: {backend_errors}")
+        result.update({
+            "status": "FAIL",
+            "error": "Backend error(s): " + "; ".join(backend_errors[:3]),
+            "time": f"{elapsed}s",
+        })
+    else:
         result.update({"status": "PASS", "time": f"{elapsed}s"})
-    except Exception as e:
-        elapsed = round(time.time() - start_time, 2)
-        result.update({"status": "FAIL", "error": str(e), "time": f"{elapsed}s"})
-
-    await browser.close()
     return result
 
 
@@ -466,11 +488,10 @@ async def main():
                     try:
                         if env_name in CROSS_DOMAIN_ENVS:
                             otp = creds.get("one-time_password") or creds.get("one_time_password") or creds.get("otp")
-                            state_path = await login_via_redirect(p, env_name, username, password, target_url, otp=otp)
+                            res = await login_via_redirect(p, env_name, username, password, target_url, otp=otp)
                         else:
                             base_url = LOGIN_URL_OVERRIDES.get(env_name, base_url)
-                            state_path = await login_and_open_datascout_profile(p, env_name, base_url, username, password, target_url)
-                        res = await test_datascout_profile(p, env_name, target_url, state_path)
+                            res = await login_and_open_datascout_profile(p, env_name, base_url, username, password, target_url)
                         break
                     except Exception as e:
                         if attempt == 0:
@@ -493,9 +514,12 @@ async def main():
 
     print("All tests complete. Results saved to:", RESULTS_FILE)
 
-    # Push results to Supabase
-    url = os.getenv("SUPABASE_URL", "")
-    key = os.getenv("SUPABASE_KEY", "")
+    # Push results to Supabase — the dashboard reads from the DASHBOARD_
+    # project, not the app's own SUPABASE_URL/KEY (which point at a
+    # different Supabase project with no profile_checks table and always
+    # 404s here).
+    url = os.getenv("DASHBOARD_SUPABASE_URL", "") or os.getenv("SUPABASE_URL", "")
+    key = os.getenv("DASHBOARD_SUPABASE_KEY", "") or os.getenv("SUPABASE_KEY", "")
     if url and key:
         checked_at = datetime.now(timezone.utc).isoformat()
         rows = [

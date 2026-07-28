@@ -10,3 +10,11 @@ test_results.json
 report_*.html
 auth_states/
 .vscode/
+July/
+
+# Screenshots — repo-wide, regardless of which folder/tool produced them.
+# datascout_logo.png is the one legitimate tracked image asset; it's
+# already committed, so this doesn't untrack it.
+*.png
+*.jpg
+*.jpeg
