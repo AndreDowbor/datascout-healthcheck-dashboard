@@ -110,3 +110,26 @@ promise never resolves. The script uses a short timeout on that specific
 click and swallows the exception, then verifies success afterwards via the
 REST API directly instead of polling the Messages textarea in what may be
 a stale frame reference.
+
+**Auto-accepts browser dialogs**: `page.on("dialog", ...)` automatically
+accepts any native confirm/alert popup (e.g. an "Overwrite existing
+objects?" prompt) for the whole run, with no pause for manual review.
+Combined with the pre-flight `folder_already_exists` check, this is meant
+to be safe — but it does mean a dialog you'd normally want to see gets
+silently dismissed.
+
+**Login**: same as the single-package script, plus it also supports the
+newer iMIS "email first" sign-in widget (`OpenIdUserName` / `OpenIdPassword`
+selectors) as a fallback if the classic form isn't found, and a
+`LOGIN_URL_OVERRIDES` dict for environments that don't land on the staff
+login page from `base_url + "/"` (currently just `demosales3` →
+`/Staff`).
+
+**Per-package/env result codes** (printed in the final SUMMARY):
+
+| Status | Meaning |
+|---|---|
+| `aborted_already_exists` | Skipped entirely — `TARGET_FOLDER_FULL_PATH` already existed, nothing was touched |
+| `verified` | Imported and confirmed present afterwards via the REST API |
+| `click_ok_but_not_found` | Upload/Import clicks completed but the REST API still doesn't show the folder — needs manual check |
+| `error` | An exception was raised during login/navigation/import; see the console output and `fail_batch_<env>.png` |
