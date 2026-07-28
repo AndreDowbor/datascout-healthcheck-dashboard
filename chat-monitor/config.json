@@ -359,7 +359,7 @@
     {
       "name": "imisdemo11",
       "type": "imis_member",
-      "url": "https://demosales11.imiscloud.com/web/",
+      "url": "https://demosales11.imiscloud.com/Web/MemberHome.aspx",
       "imis_key": "imisdemo11",
       "response_container_selector": null,
       "http_timeout": 25,
@@ -369,7 +369,7 @@
     {
       "name": "imis87",
       "type": "imis_member",
-      "url": "https://demosales87.imiscloud.com/web/",
+      "url": "https://demosales87.imiscloud.com/Web/MemberHome.aspx",
       "imis_key": "imis87",
       "response_container_selector": null,
       "http_timeout": 10,
@@ -389,7 +389,7 @@
     {
       "name": "demosales3",
       "type": "imis_member",
-      "url": "https://demosales3.imiscloud.com/web/",
+      "url": "https://demosales3.imiscloud.com/Web/MemberHome.aspx",
       "imis_key": "demosales3",
       "response_container_selector": null,
       "http_timeout": 25,
@@ -424,6 +424,166 @@
       "response_container_selector": null,
       "http_timeout": 10,
       "widget_timeout": 30,
+      "chat_timeout": 60
+    },
+    {
+      "name": "armdemo96",
+      "type": "imis_member",
+      "url": "https://demoaisp96.imiscloud.com/web/",
+      "imis_key": "armdemo96",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "atdemo2",
+      "type": "imis_member",
+      "url": "https://demoaisp2.imiscloud.com/Shared_Content/Datascout/Datascout-Concierge.aspx",
+      "imis_key": "atdemo2",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "atdemo81",
+      "type": "imis_member",
+      "url": "https://demoaisp81.imiscloud.com/Shared_Content/Datascout/Datascout-Concierge.aspx",
+      "imis_key": "atdemo81",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "atsdemo89",
+      "type": "imis_member",
+      "url": "https://demoaisp89.imiscloud.com/web/",
+      "imis_key": "atsdemo89",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "atsdemo90",
+      "type": "imis_member",
+      "url": "https://demoaisp90.imiscloud.com/Web/MemberHome.aspx",
+      "imis_key": "atsdemo90",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "ensyncdemo13",
+      "type": "imis_member",
+      "url": "https://demoaisp13.imiscloud.com/Shared_Content/Datascout/Datascout-Concierge.aspx",
+      "imis_key": "ensyncdemo13",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "i8vdemo13",
+      "type": "imis_member",
+      "url": "https://apdemoaisp13.imiscloud.com/Shared_Content/Datascout/Datascout-Concierge.aspx",
+      "imis_key": "i8vdemo13",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "ibcdemo80",
+      "type": "imis_member",
+      "url": "https://demoaisp80.imiscloud.com/web/",
+      "imis_key": "ibcdemo80",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "isgdemo106",
+      "type": "imis_member",
+      "url": "https://demoaisp106.imiscloud.com/Web/MemberHome.aspx",
+      "imis_key": "isgdemo106",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "isgdemo14",
+      "type": "imis_member",
+      "url": "https://demoaisp14.imiscloud.com/Web/MemberHome.aspx",
+      "imis_key": "isgdemo14",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demo42",
+      "type": "imis_member",
+      "url": "https://demoaisp42.imiscloud.com/Shared_Content/Datascout/Datascout-Concierge.aspx",
+      "imis_key": "demo42",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demo86",
+      "type": "imis_member",
+      "url": "https://demoaisp86.imiscloud.com/web/",
+      "imis_key": "demo86",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demosales33",
+      "type": "imis_member",
+      "url": "https://demosales33.imiscloud.com/Shared_Content/Datascout/Datascout-Concierge.aspx",
+      "imis_key": "demosales33",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demosales28",
+      "type": "imis_member",
+      "url": "https://demosales28.imiscloud.com/web/",
+      "imis_key": "demosales28",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demo14",
+      "type": "imis_member",
+      "url": "https://apdemoaisp14.imiscloud.com/Shared_Content/Datascout/Datascout-Concierge.aspx",
+      "imis_key": "demo14",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
+      "chat_timeout": 60
+    },
+    {
+      "name": "demosales44",
+      "type": "imis_member",
+      "url": "https://demosales44.imiscloud.com/Web/MemberHome.aspx",
+      "imis_key": "demosales44",
+      "response_container_selector": null,
+      "http_timeout": 45,
+      "widget_timeout": 45,
       "chat_timeout": 60
     }
   ]

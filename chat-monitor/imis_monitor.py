@@ -27,6 +27,11 @@ from onepassword_manager import OnePasswordManager  # type: ignore  # noqa: E402
 USERNAME_SELECTOR = "[id$='signInUserName']"
 PASSWORD_SELECTOR = "[id$='signInPassword']"
 LOGIN_BUTTON_SELECTOR = "[id$='SubmitButton']"
+NEW_LOGIN_USERNAME_SELECTOR = "[id$='OpenIdUserName']"
+NEW_LOGIN_CONTINUE_SELECTOR = "[id$='OpenIdSubmitButton']"
+NEW_LOGIN_PASSWORD_TOGGLE_SELECTOR = "text=Sign in using iMIS password"
+NEW_LOGIN_PASSWORD_SELECTOR = "[id$='OpenIdPassword']"
+NEW_LOGIN_SIGNIN_SELECTOR = "[id$='ReservedUserSubmitButton']"
 CHAT_BUBBLE_SELECTOR = "#chatbotBubble"
 
 
@@ -89,12 +94,22 @@ async def _login_to_imis(
     login_url = base_url.rstrip("/") + "/"
     await page.goto(login_url, wait_until="load", timeout=60_000)
 
-    # Check if login form is immediately present, else click Sign In link
+    # Check if the classic login form is immediately present, else try the
+    # newer email-first OpenID-style widget, else click a "Sign in" link.
+    use_new_login = False
     login_form_visible = False
     try:
         await page.wait_for_selector(USERNAME_SELECTOR, timeout=5000)
         login_form_visible = True
     except Exception:
+        try:
+            await page.wait_for_selector(NEW_LOGIN_USERNAME_SELECTOR, timeout=3000)
+            login_form_visible = True
+            use_new_login = True
+        except Exception:
+            pass
+
+    if not login_form_visible:
         for sel in [
             "a:has-text('Sign in')",
             "a:has-text('Sign In')",
@@ -112,20 +127,36 @@ async def _login_to_imis(
                     break
             except Exception:
                 continue
+        if not login_form_visible:
+            raise RuntimeError(f"Could not reach login form for {label or base_url}")
+        try:
+            await page.wait_for_selector(USERNAME_SELECTOR, timeout=8000)
+        except Exception:
+            await page.wait_for_selector(NEW_LOGIN_USERNAME_SELECTOR, timeout=8000)
+            use_new_login = True
 
-    if not login_form_visible:
-        raise RuntimeError(f"Could not reach login form for {label or base_url}")
+    if use_new_login:
+        await page.fill(NEW_LOGIN_USERNAME_SELECTOR, username)
+        await page.click(NEW_LOGIN_CONTINUE_SELECTOR)
+        await page.click(NEW_LOGIN_PASSWORD_TOGGLE_SELECTOR, timeout=8000)
+        await page.wait_for_selector(NEW_LOGIN_PASSWORD_SELECTOR, state="visible", timeout=8000)
+        await page.fill(NEW_LOGIN_PASSWORD_SELECTOR, password)
+        await page.click(NEW_LOGIN_SIGNIN_SELECTOR)
+        try:
+            await page.wait_for_selector(NEW_LOGIN_USERNAME_SELECTOR, state="detached", timeout=20_000)
+        except Exception:
+            await page.wait_for_selector("body", timeout=20_000)
+    else:
+        await page.wait_for_selector(USERNAME_SELECTOR, timeout=20_000)
+        await page.fill(USERNAME_SELECTOR, username)
+        await page.fill(PASSWORD_SELECTOR, password)
+        await page.click(LOGIN_BUTTON_SELECTOR)
 
-    await page.wait_for_selector(USERNAME_SELECTOR, timeout=20_000)
-    await page.fill(USERNAME_SELECTOR, username)
-    await page.fill(PASSWORD_SELECTOR, password)
-    await page.click(LOGIN_BUTTON_SELECTOR)
-
-    # Wait until login form disappears (redirect signals success)
-    try:
-        await page.wait_for_selector(USERNAME_SELECTOR, state="detached", timeout=20_000)
-    except Exception:
-        await page.wait_for_selector("body", timeout=20_000)
+        # Wait until login form disappears (redirect signals success)
+        try:
+            await page.wait_for_selector(USERNAME_SELECTOR, state="detached", timeout=20_000)
+        except Exception:
+            await page.wait_for_selector("body", timeout=20_000)
 
 
 async def check_url_imis_login(
@@ -169,6 +200,7 @@ async def check_url_imis_login(
         "chat_responded": False,
         "chat_response_ms": None,
         "chat_response_text": None,
+        "backend_errors": [],
         "status": "DOWN",
         "error": None,
     }
@@ -198,10 +230,17 @@ async def check_url_imis_login(
         return result
 
     # --- Browser: login then widget check ---
+    backend_errors: list[str] = []
+
+    def _record_response(response) -> None:
+        if response.status >= 500:
+            backend_errors.append(f"{response.status} {response.url}")
+
     context: BrowserContext | None = None
     try:
         context = await browser.new_context()
         page: Page = await context.new_page()
+        page.on("response", _record_response)
 
         try:
             await _login_to_imis(page, base_url, username, password, label=name)
@@ -257,9 +296,15 @@ async def check_url_imis_login(
         if context:
             await context.close()
 
+    result["backend_errors"] = backend_errors
+    if backend_errors and not result["error"]:
+        result["error"] = "; ".join(backend_errors[:3])
+
     result["status"] = _classify_status(
         http_ok=True,
         widget_detected=result["widget_detected"],
         chat_responded=result["chat_responded"],
+        backend_errors=backend_errors,
+        chat_response_text=result["chat_response_text"],
     )
     return result

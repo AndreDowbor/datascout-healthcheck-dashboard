@@ -102,9 +102,18 @@ def get_supabase():
 
 
 @st.cache_data(ttl=120)
-def fetch_latest(table: str, group_col: str, limit: int = 500) -> list[dict]:
+def fetch_latest(table: str, group_col: str, limit: int = 500, max_age_hours: int = 48) -> list[dict]:
+    from datetime import timedelta
     sb = get_supabase()
-    res = sb.table(table).select("*").order("checked_at", desc=True).limit(limit).execute()
+    cutoff = (datetime.now(timezone.utc) - timedelta(hours=max_age_hours)).isoformat()
+    res = (
+        sb.table(table)
+        .select("*")
+        .gte("checked_at", cutoff)
+        .order("checked_at", desc=True)
+        .limit(limit)
+        .execute()
+    )
     seen = {}
     for row in res.data:
         # Include "url" in the key: some tables (e.g. concierge_checks) reuse
@@ -224,10 +233,10 @@ i_down     = count_statuses(iqa_rows, "status", ["DOWN"])
 p_pass     = count_statuses(profile_rows, "status", ["PASS"])
 p_fail     = count_statuses(profile_rows, "status", ["FAIL"])
 e_ok       = count_statuses(engage_rows, "status", ["OK"])
-e_slow     = count_statuses(engage_rows, "status", ["SLOW"])
+e_slow     = count_statuses(engage_rows, "status", ["SLOW", "PARTIAL", "DEGRADED"])
 e_down     = count_statuses(engage_rows, "status", ["DOWN"])
 a_ok       = count_statuses(algolia_rows, "status", ["OK"])
-a_warn     = count_statuses(algolia_rows, "status", ["AUTH_ERROR", "NO_KEY"])
+a_warn     = count_statuses(algolia_rows, "status", ["AUTH_ERROR", "NO_KEY", "SKIP"])
 a_down     = count_statuses(algolia_rows, "status", ["DOWN", "ERROR"])
 b_ok       = count_statuses(bo_rows, "status", ["OK"])
 b_issues   = count_statuses(bo_rows, "status", ["ISSUES"])

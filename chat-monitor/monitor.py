@@ -306,9 +306,32 @@ async def conversational_test(
 # Orchestrator
 # ---------------------------------------------------------------------------
 
+# Phrases the bot itself shows when its backend call failed. A response
+# containing one of these is a real failure the bot is reporting to the
+# user — "chat_responded" being True does not mean the check succeeded.
+ERROR_RESPONSE_PHRASES = [
+    "encountered an error",
+    "something went wrong",
+    "please try again",
+    "i'm having trouble",
+    "i am having trouble",
+    "unable to process",
+]
+
+
+def _is_error_response(text: str | None) -> bool:
+    if not text:
+        return False
+    lowered = text.lower()
+    return any(phrase in lowered for phrase in ERROR_RESPONSE_PHRASES)
+
 
 def _classify_status(
-    http_ok: bool, widget_detected: bool, chat_responded: bool
+    http_ok: bool,
+    widget_detected: bool,
+    chat_responded: bool,
+    backend_errors: list[str] | None = None,
+    chat_response_text: str | None = None,
 ) -> str:
     if not http_ok:
         return "DOWN"
@@ -316,6 +339,10 @@ def _classify_status(
         return "DEGRADED (no-widget)"
     if not chat_responded:
         return "DEGRADED (no-response)"
+    if _is_error_response(chat_response_text):
+        return "DEGRADED (bot-error-response)"
+    if backend_errors:
+        return "DEGRADED (backend-errors)"
     return "UP"
 
 
@@ -353,6 +380,7 @@ async def check_url(
         "chat_responded": False,
         "chat_response_ms": None,
         "chat_response_text": None,
+        "backend_errors": [],
         "status": "DOWN",
         "error": None,
     }
@@ -371,10 +399,21 @@ async def check_url(
         return result
 
     # --- Browser checks ---
+    backend_errors: list[str] = []
+
+    def _record_response(response) -> None:
+        # 4xx here is often a benign retry (e.g. a not-yet-replicated config
+        # row); 5xx means the backend itself broke mid-request, which is the
+        # class of failure that still lets the chat "eventually" respond and
+        # slip through as a false UP.
+        if response.status >= 500:
+            backend_errors.append(f"{response.status} {response.url}")
+
     context: BrowserContext | None = None
     try:
         context = await browser.new_context()
         page: Page = await context.new_page()
+        page.on("response", _record_response)
 
         try:
             await page.goto(url, wait_until="domcontentloaded", timeout=widget_timeout * 1000)
@@ -413,9 +452,15 @@ async def check_url(
         if context:
             await context.close()
 
+    result["backend_errors"] = backend_errors
+    if backend_errors and not result["error"]:
+        result["error"] = "; ".join(backend_errors[:3])
+
     result["status"] = _classify_status(
         http_ok=True,
         widget_detected=result["widget_detected"],
         chat_responded=result["chat_responded"],
+        backend_errors=backend_errors,
+        chat_response_text=result["chat_response_text"],
     )
     return result
