@@ -24,7 +24,7 @@ ENVIRONMENTS = [
         "i8vdemo13", "isgdemo106", "demo83", "imis87", "atdemo81", "armdemo96", "imis36", "demo86", "atsdemo89",
         "imisdemo11", "ensyncdemo13", "ibcdemo80", "demo42", "atdemo2", "demosales3", "apimisdemo25", "demosales50",
         "aaae", "bsidemo27", "isgdemo14", "oasw", "cpanb", "aboncle",
-        "demosales44", "demosales33", "atsdemo90",
+        "demosales44", "demosales33", "atsdemo90", "abca", "psansw",
    ]
 
 #ENVIRONMENTS = ["imis36"]  # Solo Testing
@@ -59,11 +59,13 @@ PROFILE_URLS = {
     "demosales44": "https://demosales44.imiscloud.com/_Demo/Account-Pages/ContactLayouts/Account_Page_Staff.aspx?ID=126&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
     "demosales33": "https://demosales33.imiscloud.com/Shared_Content/Contacts/OrganizationLayouts/Account_Staff.aspx?ID=126&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
     "atsdemo90": "https://demoaisp90.imiscloud.com/_Demo/Account-Pages/ContactLayouts/CAR_Full_Account_Staff.aspx?ID=126&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+    "abca": "https://abca.org/Shared_Content/Staff/OrganizationLayouts/Account_Staff.aspx?ID=122881&WebsiteKey=4243d9e2-e91e-468c-97c2-2046d70c1e1a",
+    "psansw": "https://psansw.imiscloud.com/i4u_StaffSite/ContactLayouts/Account_Page_Staff.aspx?ID=100029&WebsiteKey=01d728d4-7324-460b-ae98-5a97034cd1e4",
 }
 
 # Environments where the profile URL is on a different domain than the 1Password base URL.
 # For these, we navigate to the profile URL directly and let the site redirect us to login.
-CROSS_DOMAIN_ENVS = {"oasw", "cpanb", "aboncle", "aaae"}
+CROSS_DOMAIN_ENVS = {"oasw", "cpanb", "aboncle", "aaae", "abca"}
 
 # Override base login URLs (only used for non-cross-domain envs)
 LOGIN_URL_OVERRIDES = {}
@@ -88,8 +90,8 @@ DATASCOUT_PANEL = "#datascout-profile-panel"  # optional, update if known
 OUTPUT_DIR = Path("auth_states")
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-SCREENSHOT_DIR = Path("screenshots")
-SCREENSHOT_DIR.mkdir(exist_ok=True)
+SCREENSHOT_DIR = Path("screenshots") / datetime.now().strftime("%Y-%m-%d")
+SCREENSHOT_DIR.mkdir(parents=True, exist_ok=True)
 
 RESULTS_FILE = "test_results.json"
 HEADLESS = True
@@ -278,8 +280,8 @@ async def login_and_open_datascout_profile(playwright, env_name, base_url, usern
     await page.click(DATASCOUT_BUTTON)
     print("Second click successful.")
 
-    print("Waiting 10 seconds for Datascout panel to load fully...")
-    await asyncio.sleep(10)
+    print("Waiting 20 seconds for Datascout panel to load fully...")
+    await asyncio.sleep(20)
 
     ts = timestamp()
     screenshot_path = SCREENSHOT_DIR / f"{env_name.lower()}_profile_panel_{ts}.png"
@@ -425,8 +427,8 @@ async def login_via_redirect(playwright, env_name, username, password, target_ur
     await page.click(DATASCOUT_BUTTON)
     print("Second click successful.")
 
-    print("Waiting 10 seconds for Datascout panel to load fully...")
-    await asyncio.sleep(10)
+    print("Waiting 20 seconds for Datascout panel to load fully...")
+    await asyncio.sleep(20)
 
     ts = timestamp()
     screenshot_path = SCREENSHOT_DIR / f"{env_name.lower()}_profile_panel_{ts}.png"

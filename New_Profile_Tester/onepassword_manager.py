@@ -112,7 +112,15 @@ class OnePasswordManager:
                 flat[field.id] = field.value
             if hasattr(field, 'title') and field.title:
                 norm_title = field.title.strip().lower().replace(" ", "_")
-                flat[norm_title] = field.value
+                section_id = getattr(field, "section_id", None) or getattr(getattr(field, "section", None), "id", None)
+                # Fields inside a named section (e.g. "Database Information") can share a
+                # display title with a top-level login field (e.g. "username"/"password").
+                # Top-level (unsectioned) fields always win; a sectioned field only fills
+                # the by-title key if nothing has claimed it yet.
+                if section_id:
+                    flat.setdefault(norm_title, field.value)
+                else:
+                    flat[norm_title] = field.value
         for site in getattr(item, "websites", []):
             if hasattr(site, 'label') and site.label:
                 norm_label = site.label.strip().lower().replace(" ", "_")
