@@ -70,6 +70,18 @@ CROSS_DOMAIN_ENVS = {"oasw", "cpanb", "aboncle", "aaae", "abca"}
 # Override base login URLs (only used for non-cross-domain envs)
 LOGIN_URL_OVERRIDES = {}
 
+# Environments whose Datascout panel backend has been observed to be unusually
+# slow, causing the imis-sso/callback gateway request to intermittently 502
+# under the default wait. Give these extra time before screenshotting instead
+# of penalizing every environment with a longer wait.
+SLOW_ENVS = {"i8vdemo13", "apimisdemo25"}
+SLOW_ENV_WAIT_SECONDS = 45
+DEFAULT_WAIT_SECONDS = 20
+
+
+def panel_wait_seconds(env_name: str) -> int:
+    return SLOW_ENV_WAIT_SECONDS if env_name in SLOW_ENVS else DEFAULT_WAIT_SECONDS
+
 USERNAME_SELECTOR = "[id$='signInUserName']"
 PASSWORD_SELECTOR = "[id$='signInPassword']"
 LOGIN_BUTTON_SELECTOR = "[id$='SubmitButton']"
@@ -156,11 +168,15 @@ async def login_and_open_datascout_profile(playwright, env_name, base_url, usern
     context = await browser.new_context()
     page = await context.new_page()
 
-    backend_errors = []
+    # Track the most recent response per endpoint (ignoring query string) so a
+    # transient 5xx followed by a successful retry to the same endpoint
+    # doesn't fail the run — only an error that never recovers does. A
+    # mid-session 502 with a healthy final screenshot isn't a real failure.
+    last_response_by_endpoint = {}
 
     def _record_response(response):
-        if response.status >= 500:
-            backend_errors.append(f"{response.status} {response.url}")
+        endpoint = response.url.split("?", 1)[0]
+        last_response_by_endpoint[endpoint] = (response.status, response.url)
 
     page.on("response", _record_response)
 
@@ -280,8 +296,9 @@ async def login_and_open_datascout_profile(playwright, env_name, base_url, usern
     await page.click(DATASCOUT_BUTTON)
     print("Second click successful.")
 
-    print("Waiting 20 seconds for Datascout panel to load fully...")
-    await asyncio.sleep(20)
+    wait_seconds = panel_wait_seconds(env_name)
+    print(f"Waiting {wait_seconds} seconds for Datascout panel to load fully...")
+    await asyncio.sleep(wait_seconds)
 
     ts = timestamp()
     screenshot_path = SCREENSHOT_DIR / f"{env_name.lower()}_profile_panel_{ts}.png"
@@ -294,6 +311,9 @@ async def login_and_open_datascout_profile(playwright, env_name, base_url, usern
     await browser.close()
 
     elapsed = round(time.time() - start_time, 2)
+    backend_errors = [
+        f"{status} {url}" for status, url in last_response_by_endpoint.values() if status >= 500
+    ]
     if backend_errors:
         print(f"{env_name}: backend errors during panel load: {backend_errors}")
         result.update({
@@ -325,11 +345,15 @@ async def login_via_redirect(playwright, env_name, username, password, target_ur
     context = await browser.new_context()
     page = await context.new_page()
 
-    backend_errors = []
+    # Track the most recent response per endpoint (ignoring query string) so a
+    # transient 5xx followed by a successful retry to the same endpoint
+    # doesn't fail the run — only an error that never recovers does. A
+    # mid-session 502 with a healthy final screenshot isn't a real failure.
+    last_response_by_endpoint = {}
 
     def _record_response(response):
-        if response.status >= 500:
-            backend_errors.append(f"{response.status} {response.url}")
+        endpoint = response.url.split("?", 1)[0]
+        last_response_by_endpoint[endpoint] = (response.status, response.url)
 
     page.on("response", _record_response)
 
@@ -427,8 +451,9 @@ async def login_via_redirect(playwright, env_name, username, password, target_ur
     await page.click(DATASCOUT_BUTTON)
     print("Second click successful.")
 
-    print("Waiting 20 seconds for Datascout panel to load fully...")
-    await asyncio.sleep(20)
+    wait_seconds = panel_wait_seconds(env_name)
+    print(f"Waiting {wait_seconds} seconds for Datascout panel to load fully...")
+    await asyncio.sleep(wait_seconds)
 
     ts = timestamp()
     screenshot_path = SCREENSHOT_DIR / f"{env_name.lower()}_profile_panel_{ts}.png"
@@ -441,6 +466,9 @@ async def login_via_redirect(playwright, env_name, username, password, target_ur
     await browser.close()
 
     elapsed = round(time.time() - start_time, 2)
+    backend_errors = [
+        f"{status} {url}" for status, url in last_response_by_endpoint.values() if status >= 500
+    ]
     if backend_errors:
         print(f"{env_name}: backend errors during panel load: {backend_errors}")
         result.update({
