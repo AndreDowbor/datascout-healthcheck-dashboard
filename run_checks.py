@@ -16,7 +16,12 @@ from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 import shutil
-PYTHON = shutil.which("python3.11") or shutil.which("python3") or sys.executable
+# Use the interpreter that's already running this script, not a fresh PATH
+# lookup — cron/launchd run with a minimal PATH that doesn't include
+# /opt/homebrew/bin, so shutil.which("python3.11") silently falls through to
+# the system's old python3 (3.9), which is too old for the 1Password SDK's
+# `X | None` type syntax and breaks every subprocess at import time.
+PYTHON = sys.executable or shutil.which("python3.11") or shutil.which("python3")
 BASE   = os.path.dirname(os.path.abspath(__file__))
 LOG_DIR = os.path.join(BASE, "logs")
 os.makedirs(LOG_DIR, exist_ok=True)
