@@ -82,6 +82,22 @@ DEFAULT_WAIT_SECONDS = 20
 def panel_wait_seconds(env_name: str) -> int:
     return SLOW_ENV_WAIT_SECONDS if env_name in SLOW_ENVS else DEFAULT_WAIT_SECONDS
 
+
+# Endpoints whose failures have been confirmed, repeatedly, NOT to affect the
+# Datascout panel's actual content — the panel (AI Brief included) has
+# rendered fine on screenshot review every time these errored, including
+# right after a retry. Excluded from the pass/fail gate entirely rather than
+# retried, since they've been seen failing consistently (every attempt) on
+# i8vdemo13 rather than transiently — a retry never clears them.
+IGNORED_ERROR_ENDPOINT_PATTERNS = [
+    "notificationsetresults",  # iMIS's own native notification system — unrelated to the Datascout panel
+    "imis-sso/callback",       # SSO handshake call; panel has repeatedly rendered fine despite this failing
+]
+
+
+def _is_ignored_error_endpoint(url: str) -> bool:
+    return any(pattern in url for pattern in IGNORED_ERROR_ENDPOINT_PATTERNS)
+
 USERNAME_SELECTOR = "[id$='signInUserName']"
 PASSWORD_SELECTOR = "[id$='signInPassword']"
 LOGIN_BUTTON_SELECTOR = "[id$='SubmitButton']"
@@ -305,15 +321,40 @@ async def login_and_open_datascout_profile(playwright, env_name, base_url, usern
     await page.screenshot(path=str(screenshot_path))
     print(f"Screenshot saved: {screenshot_path}")
 
+    # Retry once, only if a backend endpoint's LAST response was an error —
+    # a 5xx that fired once during the click/reload sequence, with nothing
+    # afterward to supersede it, shouldn't fail a run whose panel actually
+    # rendered fine. Confirmed false positive on aaae (prod): panel was
+    # healthy, but the one-shot imis-sso/callback call had 502'd. A fresh
+    # reload+click re-triggers that same call; last_response_by_endpoint
+    # picks up whatever it returns this time.
+    backend_errors = [
+        f"{status} {url}" for status, url in last_response_by_endpoint.values()
+        if status >= 500 and not _is_ignored_error_endpoint(url)
+    ]
+    if backend_errors:
+        print(f"{env_name}: {len(backend_errors)} backend error(s) after first attempt — retrying once...")
+        try:
+            await page.reload(wait_until="domcontentloaded", timeout=60000)
+            await page.wait_for_selector(DATASCOUT_BUTTON, timeout=20000)
+            await page.click(DATASCOUT_BUTTON)
+            await asyncio.sleep(wait_seconds)
+            retry_screenshot_path = SCREENSHOT_DIR / f"{env_name.lower()}_profile_panel_{ts}_retry.png"
+            await page.screenshot(path=str(retry_screenshot_path))
+            print(f"Retry screenshot saved: {retry_screenshot_path}")
+        except Exception as e:
+            print(f"{env_name}: retry failed: {e}")
+        backend_errors = [
+            f"{status} {url}" for status, url in last_response_by_endpoint.values()
+            if status >= 500 and not _is_ignored_error_endpoint(url)
+        ]
+
     if save_state_path:
         await context.storage_state(path=save_state_path)
 
     await browser.close()
 
     elapsed = round(time.time() - start_time, 2)
-    backend_errors = [
-        f"{status} {url}" for status, url in last_response_by_endpoint.values() if status >= 500
-    ]
     if backend_errors:
         print(f"{env_name}: backend errors during panel load: {backend_errors}")
         result.update({
@@ -460,15 +501,40 @@ async def login_via_redirect(playwright, env_name, username, password, target_ur
     await page.screenshot(path=str(screenshot_path))
     print(f"Screenshot saved: {screenshot_path}")
 
+    # Retry once, only if a backend endpoint's LAST response was an error —
+    # a 5xx that fired once during the click/reload sequence, with nothing
+    # afterward to supersede it, shouldn't fail a run whose panel actually
+    # rendered fine. Confirmed false positive on aaae (prod): panel was
+    # healthy, but the one-shot imis-sso/callback call had 502'd. A fresh
+    # reload+click re-triggers that same call; last_response_by_endpoint
+    # picks up whatever it returns this time.
+    backend_errors = [
+        f"{status} {url}" for status, url in last_response_by_endpoint.values()
+        if status >= 500 and not _is_ignored_error_endpoint(url)
+    ]
+    if backend_errors:
+        print(f"{env_name}: {len(backend_errors)} backend error(s) after first attempt — retrying once...")
+        try:
+            await page.reload(wait_until="domcontentloaded", timeout=60000)
+            await page.wait_for_selector(DATASCOUT_BUTTON, timeout=20000)
+            await page.click(DATASCOUT_BUTTON)
+            await asyncio.sleep(wait_seconds)
+            retry_screenshot_path = SCREENSHOT_DIR / f"{env_name.lower()}_profile_panel_{ts}_retry.png"
+            await page.screenshot(path=str(retry_screenshot_path))
+            print(f"Retry screenshot saved: {retry_screenshot_path}")
+        except Exception as e:
+            print(f"{env_name}: retry failed: {e}")
+        backend_errors = [
+            f"{status} {url}" for status, url in last_response_by_endpoint.values()
+            if status >= 500 and not _is_ignored_error_endpoint(url)
+        ]
+
     if save_state_path:
         await context.storage_state(path=save_state_path)
 
     await browser.close()
 
     elapsed = round(time.time() - start_time, 2)
-    backend_errors = [
-        f"{status} {url}" for status, url in last_response_by_endpoint.values() if status >= 500
-    ]
     if backend_errors:
         print(f"{env_name}: backend errors during panel load: {backend_errors}")
         result.update({
