@@ -83,15 +83,20 @@ def panel_wait_seconds(env_name: str) -> int:
     return SLOW_ENV_WAIT_SECONDS if env_name in SLOW_ENVS else DEFAULT_WAIT_SECONDS
 
 
-# Endpoints whose failures have been confirmed, repeatedly, NOT to affect the
-# Datascout panel's actual content — the panel (AI Brief included) has
-# rendered fine on screenshot review every time these errored, including
-# right after a retry. Excluded from the pass/fail gate entirely rather than
-# retried, since they've been seen failing consistently (every attempt) on
-# i8vdemo13 rather than transiently — a retry never clears them.
+# Endpoints whose failures have been confirmed NOT to affect the Datascout
+# panel's actual content — the panel (AI Brief included) has rendered fine
+# on screenshot review every time these errored. Excluded from the pass/fail
+# gate entirely rather than retried, since they've been seen failing
+# consistently (every attempt) on i8vdemo13 rather than transiently — a
+# retry never clears them.
+#
+# imis-sso/callback (the gateway SSO handshake) is deliberately NOT on this
+# list, even though it shows the same "panel fine despite the error" pattern
+# on i8vdemo13/aaae: it's also the exact endpoint that failed simultaneously
+# across ~20 environments during a real gateway outage. Ignoring it would
+# mean a repeat of that outage goes undetected here.
 IGNORED_ERROR_ENDPOINT_PATTERNS = [
     "notificationsetresults",  # iMIS's own native notification system — unrelated to the Datascout panel
-    "imis-sso/callback",       # SSO handshake call; panel has repeatedly rendered fine despite this failing
 ]
 
 
