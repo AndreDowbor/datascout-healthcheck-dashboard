@@ -18,7 +18,7 @@ from playwright.async_api import (
     TimeoutError as PlaywrightTimeoutError,
 )
 
-from monitor import _classify_status, conversational_test, http_check, INPUT_SELECTORS
+from monitor import _classify_status, _is_error_response, conversational_test, http_check, INPUT_SELECTORS
 
 # Make OnePasswordManager importable from New_Profile_Tester/
 sys.path.insert(0, str(Path(__file__).parent / "New_Profile_Tester"))
@@ -205,8 +205,13 @@ async def check_url_imis_login(
         "error": None,
     }
 
-    # --- HTTP check ---
+    # --- HTTP check (retry once — see monitor.check_url for why) ---
     http_result = await http_check(url, timeout=http_timeout)
+    if not http_result["http_ok"]:
+        await asyncio.sleep(3)
+        retry_result = await http_check(url, timeout=http_timeout)
+        if retry_result["http_ok"]:
+            http_result = retry_result
     result["http_status"] = http_result["http_status"]
     result["http_response_ms"] = http_result["http_response_ms"]
     if not http_result["http_ok"]:
@@ -231,6 +236,7 @@ async def check_url_imis_login(
 
     # --- Browser: login then widget check ---
     backend_errors: list[str] = []
+    relevant_backend_errors: list[str] = []
 
     def _record_response(response) -> None:
         if response.status >= 500:
@@ -277,6 +283,9 @@ async def check_url_imis_login(
             result["error"] = widget_result["error"]
             return result
 
+        # Retry once, only if the first reply reads as an error phrase or a
+        # 5xx fired during that specific attempt — see monitor.check_url.
+        errors_before = len(backend_errors)
         chat_result = await conversational_test(
             frame=widget_result["active_frame"],
             matched_selector=widget_result["matched_selector"],
@@ -284,6 +293,31 @@ async def check_url_imis_login(
             response_container_selector=response_selector,
             chat_timeout=chat_timeout,
         )
+        attempt_errors = backend_errors[errors_before:]
+        looks_bad = _is_error_response(chat_result["chat_response_text"]) or bool(attempt_errors)
+        relevant_backend_errors = attempt_errors
+
+        if looks_bad:
+            errors_before_retry = len(backend_errors)
+            retry_result = await conversational_test(
+                frame=widget_result["active_frame"],
+                matched_selector=widget_result["matched_selector"],
+                test_message=test_message,
+                response_container_selector=response_selector,
+                chat_timeout=chat_timeout,
+            )
+            retry_errors = backend_errors[errors_before_retry:]
+            retry_bad = (
+                not retry_result["chat_responded"]
+                or _is_error_response(retry_result["chat_response_text"])
+                or bool(retry_errors)
+            )
+            if not retry_bad:
+                chat_result = retry_result
+                relevant_backend_errors = []
+            else:
+                relevant_backend_errors = attempt_errors + retry_errors
+
         result["chat_responded"] = chat_result["chat_responded"]
         result["chat_response_ms"] = chat_result["chat_response_ms"]
         result["chat_response_text"] = chat_result["chat_response_text"]
@@ -297,14 +331,14 @@ async def check_url_imis_login(
             await context.close()
 
     result["backend_errors"] = backend_errors
-    if backend_errors and not result["error"]:
-        result["error"] = "; ".join(backend_errors[:3])
+    if relevant_backend_errors and not result["error"]:
+        result["error"] = "; ".join(relevant_backend_errors[:3])
 
     result["status"] = _classify_status(
         http_ok=True,
         widget_detected=result["widget_detected"],
         chat_responded=result["chat_responded"],
-        backend_errors=backend_errors,
+        backend_errors=relevant_backend_errors,
         chat_response_text=result["chat_response_text"],
     )
     return result
