@@ -33,8 +33,7 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-  html, body, [class*="css"] { font-family: 'Inter', sans-serif; background-color: #FFF8F4; color: #0D1B3E; }
+  html, body, [class*="css"] { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #FFF8F4; color: #0D1B3E; }
   #MainMenu, footer, header { visibility: hidden; }
   .block-container { padding: 2rem 2rem 4rem; max-width: 1400px; }
   .section-label { font-size:15px; font-weight:700; letter-spacing:0.04em; color:#0D1B3E; margin-bottom:0.75rem; margin-top:2rem; }
@@ -56,8 +55,15 @@ st.markdown("""
   .badge-degraded { background:#FEF3C7; color:#B45309; }
   .badge-down     { background:#FEE2E2; color:#DC2626; }
   .bot-meta { font-size:11px; color:#7A90AA; display:flex; gap:10px; }
+  .bot-meta span:not(:last-child) { margin-right:10px; }
   .last-checked { font-size:11px; color:#8A9FBA; margin-top:5px; }
   .ds-divider { border:none; border-top:1px solid #F0D8C8; margin:2rem 0 0; }
+  div[data-testid="stTextInput"] input { border-radius:10px; border:1px solid #F0D8C8; padding:10px 14px; font-size:13px; }
+  div[data-testid="stTextInput"] input:focus { border-color:#FC6305 !important; box-shadow:0 0 0 1px #FC6305 !important; }
+  .known-tag { display:inline-block; font-size:9px; font-weight:700; padding:1px 7px; border-radius:999px; letter-spacing:0.04em; margin-left:6px; background:#E2E8F0; color:#64748B; border:1px dashed #94A3B8; text-transform:uppercase; vertical-align:middle; }
+  .trend-tag { display:inline-block; font-size:9px; font-weight:700; padding:1px 7px; border-radius:999px; letter-spacing:0.03em; margin-left:6px; vertical-align:middle; }
+  .trend-new { background:#FEE2E2; color:#DC2626; }
+  .trend-recurring { background:#F1F5F9; color:#94A3B8; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -65,9 +71,8 @@ st.markdown("""
 
 TABLE_CSS = """
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: transparent; font-family: 'Inter', sans-serif; }
+  body { background: transparent; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
   .table-wrap { background:#FFFFFF; border:1px solid #F0D8C8; border-radius:10px; overflow:hidden; }
   table { width:100%; border-collapse:collapse; font-size:13px; }
   th { text-align:left; padding:9px 14px; color:#FC6305; font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid #F0D8C8; background:#FFF8F4; }
@@ -85,6 +90,10 @@ TABLE_CSS = """
   .s-fail    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#FEE2E2; color:#DC2626; }
   .s-warn    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#FEF3C7; color:#B45309; }
   .s-skip    { display:inline-block; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:700; background:#E2E8F0; color:#64748B; }
+  .known-tag { display:inline-block; font-size:9px; font-weight:700; padding:1px 7px; border-radius:999px; letter-spacing:0.04em; margin-left:6px; background:#E2E8F0; color:#64748B; border:1px dashed #94A3B8; text-transform:uppercase; vertical-align:middle; }
+  .trend-tag { display:inline-block; font-size:9px; font-weight:700; padding:1px 7px; border-radius:999px; letter-spacing:0.03em; margin-left:6px; vertical-align:middle; }
+  .trend-new { background:#FEE2E2; color:#DC2626; }
+  .trend-recurring { background:#F1F5F9; color:#94A3B8; }
 </style>
 """
 
@@ -115,16 +124,29 @@ def fetch_latest(table: str, group_col: str, limit: int = 500, max_age_hours: in
         .execute()
     )
     seen = {}
+    previous_status = {}
     for row in res.data:
         # Include "url" in the key: some tables (e.g. concierge_checks) reuse
         # the same name/environment for two distinct check variants (direct
         # chat URL vs. iMIS member-login flow), which would otherwise collide
         # and silently drop one of the two checks. There's no "type" column
         # to disambiguate on, but the url always differs between variants.
-        key = (row.get(group_col), row.get("url"))
+        # Also include "environment" (prod/staging): engage_checks reuses
+        # identical org names between the two (e.g. NTEU, CPA NB), which
+        # would otherwise collide and silently drop one of the two rows.
+        key = (row.get(group_col), row.get("url"), row.get("environment"))
         if key not in seen:
             seen[key] = row
-    return list(seen.values())
+        elif key not in previous_status:
+            # Second time we see this key = the next-most-recent check for
+            # the same env/org/bot, since res.data is ordered by checked_at
+            # desc. Stash it so the UI can show "new failure" vs "recurring".
+            previous_status[key] = row.get("status")
+    result = list(seen.values())
+    for row in result:
+        key = (row.get(group_col), row.get("url"), row.get("environment"))
+        row["_previous_status"] = previous_status.get(key)
+    return result
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -175,6 +197,33 @@ def count_statuses(rows, field, values):
 
 def escape(s):
     return (s or "").replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace('"',"&quot;")
+
+# Environments known to be failing for a reason already tracked outside this
+# dashboard (e.g. a partner conversation in progress) — tagged so they don't
+# read as a new/urgent finding every time someone glances at the board.
+KNOWN_ISSUE_ENVS = {
+    "atdemo81": "Likely discontinued partner environment — partner already notified, decision pending. Not a new bug.",
+}
+
+def known_tag(name):
+    note = KNOWN_ISSUE_ENVS.get((name or "").strip().lower())
+    if not note:
+        return ""
+    return f'<span class="known-tag" title="{escape(note)}">known issue</span>'
+
+_GOOD_STATUS_PREFIXES = ("OK", "PASS", "UP", "SKIP", "NO_KEY")
+
+def _is_bad_status(status):
+    s = (status or "").upper()
+    return bool(s) and not s.startswith(_GOOD_STATUS_PREFIXES)
+
+def trend_tag(status, previous_status):
+    """Flags a failing row as newly-broken vs. still-broken-since-last-check."""
+    if not _is_bad_status(status) or not previous_status:
+        return ""
+    if _is_bad_status(previous_status):
+        return '<span class="trend-tag trend-recurring" title="Also failed on the previous check">↻ recurring</span>'
+    return '<span class="trend-tag trend-new" title="Passed on the previous check — this just started failing">✦ new</span>'
 
 
 # ── Header ────────────────────────────────────────────────────────────────────
@@ -232,9 +281,19 @@ i_issues   = count_statuses(iqa_rows, "status", ["ISSUES"])
 i_down     = count_statuses(iqa_rows, "status", ["DOWN"])
 p_pass     = count_statuses(profile_rows, "status", ["PASS"])
 p_fail     = count_statuses(profile_rows, "status", ["FAIL"])
-e_ok       = count_statuses(engage_rows, "status", ["OK"])
-e_slow     = count_statuses(engage_rows, "status", ["SLOW", "PARTIAL", "DEGRADED"])
-e_down     = count_statuses(engage_rows, "status", ["DOWN"])
+# engage_checks covers two distinct target lists (production orgs vs. staging
+# partner/demo orgs) that can share the exact same org name (NTEU, CPA NB
+# appear in both) — split by the "environment" column rather than treating
+# it as one pool, or the two get silently conflated in both the count and
+# the table below.
+engage_prod_rows    = [r for r in engage_rows if r.get("environment") == "production"]
+engage_staging_rows = [r for r in engage_rows if r.get("environment") == "staging"]
+ep_ok      = count_statuses(engage_prod_rows, "status", ["OK"])
+ep_slow    = count_statuses(engage_prod_rows, "status", ["SLOW", "PARTIAL", "DEGRADED"])
+ep_down    = count_statuses(engage_prod_rows, "status", ["DOWN"])
+es_ok      = count_statuses(engage_staging_rows, "status", ["OK"])
+es_slow    = count_statuses(engage_staging_rows, "status", ["SLOW", "PARTIAL", "DEGRADED"])
+es_down    = count_statuses(engage_staging_rows, "status", ["DOWN"])
 a_ok       = count_statuses(algolia_rows, "status", ["OK"])
 a_warn     = count_statuses(algolia_rows, "status", ["AUTH_ERROR", "NO_KEY", "SKIP"])
 a_down     = count_statuses(algolia_rows, "status", ["DOWN", "ERROR"])
@@ -268,7 +327,7 @@ def summary_card(title, icon, main_val, main_label, main_color, sub_items, last_
       </div>
     </div>"""
 
-c1, c2, c3, c4, c5, c6 = st.columns(6)
+c1, c2, c3, c4, c5, c6, c7 = st.columns(7)
 with c1:
     c_total = c_up + c_degraded + c_down
     st.markdown(summary_card(
@@ -302,14 +361,22 @@ with c4:
         latest_ts(profile_rows)
     ), unsafe_allow_html=True)
 with c5:
-    e_total = e_ok + e_slow + e_down
+    ep_total = ep_ok + ep_slow + ep_down
     st.markdown(summary_card(
-        "Engage", "⚡",
-        e_ok, f"of {e_total} orgs OK", "#16A34A",
-        [(e_slow, "Slow", "#D97706"), (e_down, "Down", "#DC2626")],
-        latest_ts(engage_rows)
+        "Engage — Prod", "⚡",
+        ep_ok, f"of {ep_total} orgs OK", "#16A34A",
+        [(ep_slow, "Slow", "#D97706"), (ep_down, "Down", "#DC2626")],
+        latest_ts(engage_prod_rows)
     ), unsafe_allow_html=True)
 with c6:
+    es_total = es_ok + es_slow + es_down
+    st.markdown(summary_card(
+        "Engage — Staging", "⚡",
+        es_ok, f"of {es_total} orgs OK", "#16A34A",
+        [(es_slow, "Slow", "#D97706"), (es_down, "Down", "#DC2626")],
+        latest_ts(engage_staging_rows)
+    ), unsafe_allow_html=True)
+with c7:
     a_total = a_ok + a_warn + a_down
     st.markdown(summary_card(
         "Algolia", "🔎",
@@ -320,16 +387,53 @@ with c6:
 
 st.markdown("<div style='margin-top:2rem'></div>", unsafe_allow_html=True)
 
+# ── Search / filter ──────────────────────────────────────────────────────────
+# Filters the per-section lists below (bot cards + all tables) by name/env/org
+# substring. Summary cards above intentionally stay unfiltered — they should
+# always reflect the whole fleet, not just the current search.
+
+search_query = st.text_input(
+    "Filter",
+    placeholder="🔍  Filter by environment, org, or bot name…",
+    label_visibility="collapsed",
+    key="global_search",
+).strip().lower()
+
+def _filter(rows, field):
+    if not search_query:
+        return rows
+    return [r for r in rows if search_query in (r.get(field) or "").lower()]
+
+def _section_empty(original_rows, filtered_rows, no_data_msg) -> bool:
+    """Renders the right info message and returns True if the section should be skipped."""
+    if not original_rows:
+        st.info(no_data_msg)
+        return True
+    if not filtered_rows and search_query:
+        st.info(f"No matches for “{search_query}”.")
+        return True
+    return False
+
+concierge_rows_f      = _filter(concierge_rows, "name")
+iqa_rows_f             = _filter(iqa_rows, "environment")
+bo_rows_f              = _filter(bo_rows, "environment")
+profile_rows_f         = _filter(profile_rows, "environment")
+engage_prod_rows_f     = _filter(engage_prod_rows, "org")
+engage_staging_rows_f  = _filter(engage_staging_rows, "org")
+algolia_rows_f         = _filter(algolia_rows, "environment")
+
+st.markdown("<div style='margin-top:0.5rem'></div>", unsafe_allow_html=True)
+
 # ── Section 1: Concierge bot cards ────────────────────────────────────────────
 
 st.markdown('<div class="section-label">Concierge Bots</div>', unsafe_allow_html=True)
 
-if not concierge_rows:
-    st.info("No concierge data yet.")
+if _section_empty(concierge_rows, concierge_rows_f, "No concierge data yet."):
+    pass
 else:
     order = {"DOWN": 0, "DEGRADED": 1, "UP": 2}
     sorted_bots = sorted(
-        concierge_rows,
+        concierge_rows_f,
         key=lambda r: (order.get((r.get("status") or "DOWN").upper().split()[0], 3), r.get("name", ""))
     )
     cols = st.columns(5)
@@ -345,10 +449,12 @@ else:
         url    = escape(bot.get("url") or "")
         with cols[i % 5]:
             error_html = "" if not error or sc == "up" else f'<div style="font-size:10px;color:#EF4444;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{error[:50]}</div>'
+            k_tag = known_tag(name)
+            t_tag = trend_tag(status, bot.get("_previous_status"))
             card_inner = (
                 f'<div class="bot-name" title="{escape(name)}">{escape(name)}</div>'
-                f'<div><span class="bot-badge {bc}">{escape(status)}</span></div>'
-                f'<div class="bot-meta"><span>HTTP {http}</span><span>Chat {chat}</span></div>'
+                f'<div><span class="bot-badge {bc}">{escape(status)}</span>{k_tag}{t_tag}</div>'
+                f'<div class="bot-meta"><span>HTTP {http}</span><span>·&nbsp;Chat {chat}</span></div>'
                 f'{error_html}'
                 f'<div class="last-checked">{ts}</div>'
             )
@@ -361,11 +467,11 @@ else:
 
 st.markdown("<hr class='ds-divider'><div class='section-label'>IQA Structure</div>", unsafe_allow_html=True)
 
-if not iqa_rows:
-    st.info("No IQA data yet.")
+if _section_empty(iqa_rows, iqa_rows_f, "No IQA data yet."):
+    pass
 else:
     sorted_iqa = sorted(
-        iqa_rows,
+        iqa_rows_f,
         key=lambda r: ({"OK":2,"ISSUES":1,"DOWN":0}.get((r.get("status") or "DOWN").upper(), 0), r.get("environment","")),
         reverse=True
     )
@@ -421,10 +527,12 @@ else:
         params_issue = issues > 0 and not broken and not missing and params
         has_details = bool(broken or missing or params_issue)
         chevron = '<span class="chevron">▶</span>' if has_details else '<span style="display:inline-block;width:16px;margin-right:6px"></span>'
+        k_tag = known_tag(r.get("environment"))
+        t_tag = trend_tag(status, r.get("_previous_status"))
 
         rows_html += f"""<tr class="iqa-row" data-id="{i}">
           <td><span class="env">{chevron}{env}</span></td>
-          <td>{table_badge(status)}</td>
+          <td>{table_badge(status)}{k_tag}{t_tag}</td>
           <td><span class="cnt">{issues if issues else "—"}</span></td>
           <td><span class="ts">{ts}</span></td>
         </tr>"""
@@ -473,11 +581,11 @@ else:
 
 st.markdown("<hr class='ds-divider'><div class='section-label'>Business Objects</div>", unsafe_allow_html=True)
 
-if not bo_rows:
-    st.info("No BO data yet. Run the BO Healthcheck to populate.")
+if _section_empty(bo_rows, bo_rows_f, "No BO data yet. Run the BO Healthcheck to populate."):
+    pass
 else:
     sorted_bo = sorted(
-        bo_rows,
+        bo_rows_f,
         key=lambda r: ({"OK":2,"ISSUES":1,"DOWN":0}.get((r.get("status") or "DOWN").upper(), 0), r.get("environment","")),
         reverse=True
     )
@@ -508,10 +616,12 @@ else:
         errored = details.get("errored", [])
         has_details = bool(missing or broken or errored)
         chevron = '<span class="chevron">▶</span>' if has_details else '<span style="display:inline-block;width:16px;margin-right:6px"></span>'
+        k_tag = known_tag(r.get("environment"))
+        t_tag = trend_tag(status, r.get("_previous_status"))
 
         rows_html += f"""<tr class="iqa-row bo-row" data-id="{i}">
           <td><span class="env">{chevron}{env}</span></td>
-          <td>{table_badge(status)}</td>
+          <td>{table_badge(status)}{k_tag}{t_tag}</td>
           <td><span class="cnt">{issues if issues else "—"}</span></td>
           <td><span class="ts">{ts}</span></td>
         </tr>"""
@@ -555,11 +665,11 @@ else:
 
 st.markdown("<hr class='ds-divider'><div class='section-label'>Profile Checks</div>", unsafe_allow_html=True)
 
-if not profile_rows:
-    st.info("No profile check data yet. Run the Profile Tester to populate.")
+if _section_empty(profile_rows, profile_rows_f, "No profile check data yet. Run the Profile Tester to populate."):
+    pass
 else:
     sorted_profiles = sorted(
-        profile_rows,
+        profile_rows_f,
         key=lambda r: ({"PASS":1,"FAIL":0}.get((r.get("status") or "FAIL").upper(), 0), r.get("environment","")),
         reverse=True
     )
@@ -571,9 +681,11 @@ else:
         dur_s  = f"{dur:.1f}s" if dur is not None else "—"
         ts     = escape(fmt_ts(r.get("checked_at")))
         error  = escape(r.get("error") or "")
+        k_tag  = known_tag(r.get("environment"))
+        t_tag  = trend_tag(status, r.get("_previous_status"))
         rows_html += f"""<tr>
           <td><span class="env">{env}</span></td>
-          <td>{table_badge(status)}</td>
+          <td>{table_badge(status)}{k_tag}{t_tag}</td>
           <td><span class="ts">{dur_s}</span></td>
           <td><span class="ts">{ts}</span></td>
           <td><span class="err" title="{error}">{"" if not error or status.upper()=="PASS" else error[:60]}</span></td>
@@ -588,15 +700,13 @@ else:
       </table>
     </div>""", height=height, scrolling=False)
 
-# ── Section 6: Engage table ───────────────────────────────────────────────────
+# ── Section 6: Engage tables (Production / Staging) ──────────────────────────
 
-st.markdown("<hr class='ds-divider'><div class='section-label'>Engage</div>", unsafe_allow_html=True)
-
-if not engage_rows:
-    st.info("No Engage data yet. Run the Engage Healthcheck to populate.")
-else:
+def render_engage_table(original_rows, filtered_rows):
+    if _section_empty(original_rows, filtered_rows, "No Engage data yet. Run the Engage Healthcheck to populate."):
+        return
     sorted_engage = sorted(
-        engage_rows,
+        filtered_rows,
         key=lambda r: ({"OK": 2, "SLOW": 1, "DEGRADED": 1, "PARTIAL": 1, "DOWN": 0}.get((r.get("status") or "DOWN").upper(), 0), r.get("org", "")),
         reverse=True,
     )
@@ -615,9 +725,11 @@ else:
             err_counts += f'<span style="color:#F59E0B;font-size:11px;margin-right:6px">⚠ {c_err} console</span>'
         if p_err:
             err_counts += f'<span style="color:#EF4444;font-size:11px;margin-right:6px">✕ {p_err} JS</span>'
+        k_tag = known_tag(r.get("org"))
+        t_tag = trend_tag(status, r.get("_previous_status"))
         rows_html += f"""<tr>
           <td><span class="env">{org}</span></td>
-          <td>{table_badge(status)}</td>
+          <td>{table_badge(status)}{k_tag}{t_tag}</td>
           <td><span class="ts">{load_s}</span></td>
           <td>{err_counts}</td>
           <td><span class="err" title="{summary}">{"" if not summary or status.upper() == "OK" else summary[:70]}</span></td>
@@ -633,15 +745,21 @@ else:
       </table>
     </div>""", height=height, scrolling=False)
 
+st.markdown("<hr class='ds-divider'><div class='section-label'>Engage — Production</div>", unsafe_allow_html=True)
+render_engage_table(engage_prod_rows, engage_prod_rows_f)
+
+st.markdown("<div class='section-label'>Engage — Staging</div>", unsafe_allow_html=True)
+render_engage_table(engage_staging_rows, engage_staging_rows_f)
+
 # ── Section 7: Algolia table ─────────────────────────────────────────────────
 
 st.markdown("<hr class='ds-divider'><div class='section-label'>Algolia</div>", unsafe_allow_html=True)
 
-if not algolia_rows:
-    st.info("No Algolia data yet. Run the Algolia Healthcheck to populate.")
+if _section_empty(algolia_rows, algolia_rows_f, "No Algolia data yet. Run the Algolia Healthcheck to populate."):
+    pass
 else:
     sorted_algolia = sorted(
-        algolia_rows,
+        algolia_rows_f,
         key=lambda r: ({"OK":3,"NO_KEY":2,"AUTH_ERROR":1,"DOWN":0,"ERROR":0}.get((r.get("status") or "DOWN").upper(), 0), r.get("environment","")),
         reverse=True
     )
@@ -652,10 +770,12 @@ else:
         app_id = escape(r.get("app_id") or "—")
         ts     = escape(fmt_ts(r.get("checked_at")))
         error  = escape(r.get("error") or "")
+        k_tag  = known_tag(r.get("environment"))
+        t_tag  = trend_tag(status, r.get("_previous_status"))
         rows_html += f"""<tr>
           <td><span class="env">{env}</span></td>
           <td><span style="font-family:monospace;font-size:11px;color:#5A7A9A;">{app_id}</span></td>
-          <td>{table_badge(status)}</td>
+          <td>{table_badge(status)}{k_tag}{t_tag}</td>
           <td><span class="err" title="{error}">{"" if not error or status.upper() == "OK" else error[:60]}</span></td>
           <td><span class="ts">{ts}</span></td>
         </tr>"""

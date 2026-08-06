@@ -6,11 +6,10 @@ Usage:
     python3 run_checks.py
 """
 
-import json
 import subprocess
 import sys
 import os
-from datetime import datetime, timezone
+from datetime import datetime
 from dotenv import load_dotenv
 
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
@@ -47,38 +46,6 @@ def run(label: str, script: str, cwd: str) -> bool:
     else:
         print(f"\n  ❌  {label} failed (exit code {result.returncode}).")
         return False
-
-
-def push_profile_results(results_file: str) -> None:
-    try:
-        from supabase import create_client
-        url = os.getenv("DASHBOARD_SUPABASE_URL") or os.getenv("SUPABASE_URL", "")
-        key = os.getenv("DASHBOARD_SUPABASE_KEY") or os.getenv("SUPABASE_KEY", "")
-        if not url or not key:
-            print("  [warn] Supabase not configured — skipping profile push.")
-            return
-        with open(results_file) as f:
-            raw = json.load(f)
-        checked_at = datetime.now(timezone.utc).isoformat()
-        rows = []
-        for r in raw:
-            time_str = r.get("time", "0s")
-            try:
-                duration = float(time_str.rstrip("s"))
-            except ValueError:
-                duration = None
-            rows.append({
-                "environment":       r.get("env"),
-                "status":            r.get("status", "FAIL"),
-                "error":             r.get("error"),
-                "duration_seconds":  duration,
-                "checked_at":        checked_at,
-            })
-        sb = create_client(url, key)
-        sb.table("profile_checks").insert(rows).execute()
-        print(f"  → Pushed {len(rows)} Profile results to Supabase.")
-    except Exception as e:
-        print(f"  [warn] Profile Supabase push failed: {e}")
 
 
 def alert_production_failures(check_type: str) -> None:
@@ -139,7 +106,9 @@ if __name__ == "__main__":
         script=os.path.join(PROFILE_DIR, "imis_env_tester_with_1password.py"),
         cwd=PROFILE_DIR,
     )
-    push_profile_results(os.path.join(PROFILE_DIR, "test_results.json"))
+    # Profile Tester pushes its own results to Supabase at the end of its
+    # own run (see imis_env_tester_with_1password.py) — don't push again
+    # here, that was double-inserting every row into profile_checks.
     alert_production_failures("Profile")
 
     results["Engage Healthcheck"] = run(

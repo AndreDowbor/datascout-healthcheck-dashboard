@@ -105,6 +105,7 @@ def push_results(results: list[dict]):
     rows = [
         {
             "org":                  r["org"],
+            "environment":          ENVIRONMENT,
             "status":               r["status"],
             "load_time_seconds":    r.get("load_time_seconds"),
             "dashboard_ok":         r.get("dashboard_ok", False),
